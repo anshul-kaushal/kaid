@@ -88,6 +88,8 @@
             font-size: 1.05rem;
             line-height: 1.7;
             color: var(--text-primary);
+            overflow-y: auto; /* ADD: Allows this area to scroll if content is too long */
+            flex-grow: 1;
         }
         .source-lyric {
             background-color: var(--album-identity-color);
@@ -192,6 +194,23 @@
             #annotation-panel.visible { transform: translateY(0); }
             .back-button { top: 1rem; left: 1rem; width: 2.5rem; height: 2.5rem; }
             .back-button svg { width: 1.25rem; height: 1.25rem; }
+            .song-title-header {
+        flex-wrap: wrap;
+    }
+
+    /* 2. Make the title take up the entire first line. */
+    .song-title-header h1 {
+        width: 100%;
+    }
+
+    /* 3. Adjust the button, which is now on the second line. */
+    .about-button-expand {
+        margin-top: 0.75rem;
+        margin-left: -0.75rem;
+    }
+    .main-container {
+        padding-top: 5rem !important; /* Added !important to force the override */
+    }
         }
     </style>
 </head>
@@ -204,7 +223,7 @@
         
     <div class="main-container px-6 py-12 md:px-12 md:py-24">
         <header class="lyrics-header mb-12">
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 song-title-header">
                 <h1 class="text-5xl md:text-6xl font-bold mb-0">khoj</h1>
                 <button id="about-song-button" class="about-button-expand" aria-label="About this song">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
