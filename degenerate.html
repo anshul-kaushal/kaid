@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Degenerate - Annotated Lyrics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-dark: #000000;
+            --surface-color: #201A28; 
+            --text-primary: #e2e2e2;
+            --text-secondary: #888888;
+            --border-color: #3a2a4a; 
+            --album-identity-color: #9333ea; 
+            --hover-accent-color: rgba(147, 51, 234, 0.15); 
+            --icon-color-light-purple: #b298dc; 
+        }
+        body {
+            font-family: 'Lora', serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+        }
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--background-dark); }
+        ::-webkit-scrollbar-thumb { background-color: #581c87; border-radius: 8px; border: 2px solid var(--background-dark); }
+        .main-container { max-width: 768px; }
+        .lyrics-header h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--album-identity-color);
+        }
+        .lyrics-line {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .lyrics-line:hover {
+            background-color: var(--hover-accent-color);
+            color: var(--text-primary);
+        }
+        .lyrics-line.active {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            font-weight: 600;
+        }
+        .verse-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+        }
+        #annotation-panel {
+            background-color: var(--surface-color);
+            border-left: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 550px;
+            height: 100vh;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+            z-index: 50;
+            font-family: 'Inter', sans-serif;
+        }
+        #annotation-panel.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        /* #panel-header-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--primary-accent-color);
+        } */
+        .annotation-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+        .source-lyric {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            font-weight: 600;
+        }
+        
+        .close-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: transparent;
+            color: var(--icon-color-light-purple);
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .close-button:hover {
+            background-color: var(--album-identity-color);
+            color: #fff;
+        }
+        .close-button svg {
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: rgba(32, 26, 40, 0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: var(--icon-color-light-purple);
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+        }
+        .back-button:hover {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            transform: scale(1.05);
+        }
+        .back-button svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .about-button-expand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            height: 2.5rem;
+            padding: 0 0.75rem;
+            border-radius: 999px;
+            background-color: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            overflow: hidden;
+        }
+        .about-button-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            width: 0;
+            transition: width 0.4s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.2s ease;
+        }
+        .about-button-expand:hover {
+            background-color: var(--surface-color);
+            color: var(--text-primary);
+            border-color: var(--primary-accent-color);
+        }
+        .about-button-expand:hover .about-button-text {
+            width: 50px;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .lyrics-line { font-size: 1rem; line-height: 1.7; }
+            #annotation-panel {
+                top: auto;
+                bottom: 0;
+                width: 100%;
+                max-width: 100%;
+                height: 60vh;
+                transform: translateY(100%);
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+                border-top-left-radius: 20px;
+                border-top-right-radius: 20px;
+            }
+            #annotation-panel.visible { transform: translateY(0); }
+            .back-button { top: 1rem; left: 1rem; width: 2.5rem; height: 2.5rem; }
+            .back-button svg { width: 1.25rem; height: 1.25rem; }
+        }
+    </style>
+</head>
+<body class="">
+    <a href="index.html" class="back-button" aria-label="Back to main page">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+    </a>
+        
+    <div class="main-container px-6 py-12 md:px-12 md:py-24">
+        <header class="lyrics-header mb-12">
+            <div class="flex items-center gap-4">
+                <h1 class="text-5xl md:text-6xl font-bold mb-0">degenerate</h1>
+                <button id="about-song-button" class="about-button-expand" aria-label="About this song">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="about-button-text">About</span>
+                </button>
+            </div>
+            <h2 class="text-xl text-gray-400 mt-2">Annotated Lyrics</h2>
+        </header>
+
+        <section id="lyrics-content">
+            <h3 class="verse-title">Verse</h3>
+            <div id="lyrics-v1" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="v1-g1">khabe hath’ch phari hoyi mai diet coke</p>
+                <p class="lyrics-line" data-annotation-id="v1-g1">tiji din di sugar addict mai high bahut</p>
+                <p class="lyrics-line" data-annotation-id="v1-g2">16 saal ton gwacheya mai Gaitonde,</p>
+                <p class="lyrics-line" data-annotation-id="v1-g2">rab ton aas karan cheti milaye maut</p>
+                <p class="lyrics-line" data-annotation-id="v1-g3">sajje hath’ch lann, ve meri downfall</p>
+                <p class="lyrics-line" data-annotation-id="v1-g3">skip karta kamm, kal aa townhall</p>
+                <p class="lyrics-line" data-annotation-id="v1-g4">meri aalas aa tang, ve saala jaau kaun?</p>
+                <p class="lyrics-line" data-annotation-id="v1-g4">chak filipina OKC te raati laun call</p>
+                <p class="lyrics-line" data-annotation-id="v1-g5">10 labhiyan te text kita ‘morning’</p>
+                <p class="lyrics-line" data-annotation-id="v1-g5">Kaushal raat de 11 vje aa horny</p>
+                <p class="lyrics-line" data-annotation-id="v1-g6">khat pyaar de, lutaaye kinne ex te scroll</p>
+                <p class="lyrics-line" data-annotation-id="v1-g6">ohdi vekh pics pher kita mai X te scroll</p>
+                <p class="lyrics-line" data-annotation-id="v1-g7">kadd kaathi jiddan vadhi, odan ghati aa bheerh</p>
+                <p class="lyrics-line" data-annotation-id="v1-g7">jehri kare ve menu lookup, hundi ghatiya peerh</p>
+                <p class="lyrics-line" data-annotation-id="v1-g8">sheesha tutteya te knuckles mere kar rahe bleed</p>
+                <p class="lyrics-line" data-annotation-id="v1-g8">par eh’ch kasoor kihda? galti meri aa veer</p>
+                <p class="lyrics-line" data-annotation-id="v1-g9">manager agge challe na koi aj daleel</p>
+                <p class="lyrics-line" data-annotation-id="v1-g9">jyaada kar reha slack ghat kar reha teams</p>
+                <p class="lyrics-line" data-annotation-id="v1-g10">ghante 10 laye mai, ghante ghate aa 30</p>
+                <p class="lyrics-line" data-annotation-id="v1-g10">kam vale ve nap, raati lawaan na neend</p>
+                <p class="lyrics-line" data-annotation-id="v1-g11">maapeyan de karje’ch ni mai ruleya paya</p>
+                <p class="lyrics-line" data-annotation-id="v1-g11">khoure kishtan tan door methon puge na byaaj</p>
+                <p class="lyrics-line" data-annotation-id="v1-g12">ohna de khoono khoon roz hunde aa khwaab</p>
+                <p class="lyrics-line" data-annotation-id="v1-g13">bahuta sambhle na methon kairhe bulleyan naal waah, roop jihda dhaarda aa sach</p>
+                <p class="lyrics-line" data-annotation-id="v1-g14">faaha vadd ve swaardan aa aj</p>
+                <p class="lyrics-line" data-annotation-id="v1-g14">vas challe bas man da vighaarhdan aa kal aidan</p>
+                <p class="lyrics-line" data-annotation-id="v1-g15">vekh banjar ve gadd da aa hal mai tan</p>
+                <p class="lyrics-line" data-annotation-id="v1-g16">khundi kalam ghati lagdi aa dhaar jiven</p>
+                <p class="lyrics-line" data-annotation-id="v1-g16">jhaakdi aa gallan chon kabbi ik haar jiven</p>
+                <p class="lyrics-line" data-annotation-id="v1-g17">fikke dikhaawe befikre ne haal jiven</p>
+                <p class="lyrics-line" data-annotation-id="v1-g18">duniya jo laptan’ch oo mukh da nikhaar bane</p>
+                <p class="lyrics-line" data-annotation-id="v1-g19">Anshul aa dassan tera nibhda aa saar kiven</p>
+                <p class="lyrics-line" data-annotation-id="v1-g20">kaddke sama phone kardi aa maa dine</p>
+                <p class="lyrics-line" data-annotation-id="v1-g20">nicha dikhaawein tera maksat ki laahntiye</p>
+                <p class="lyrics-line" data-annotation-id="v1-g20">marhdan aa ohte khij teri majaal ki eh</p>
+                
+                <p class="lyrics-line p-2 mt-4 rounded-lg italic text-gray-400" data-annotation-id="v1-g21">[demon voice starts]</p>
+                <p class="lyrics-line" data-annotation-id="v1-g21">rishte oh killeh ne fateh jo hunde aa</p>
+                <p class="lyrics-line" data-annotation-id="v1-g21">ijjat rakhail ohdi hundi jo kaabil eh</p>
+                <p class="lyrics-line" data-annotation-id="v1-g22">kharhda na khud layi na vekhe jo supne aa</p>
+                <p class="lyrics-line" data-annotation-id="v1-g22">vicharda lukk ke tu dissen na bahar kiven?</p>
+
+                <p class="lyrics-line p-2 mt-4 rounded-lg italic text-gray-400" data-annotation-id="v1-g22">[Manjot voicemail plays and is interrupted / demon voice starts getting stronger]</p>
+                <p class="lyrics-line" data-annotation-id="v1-g23">baitha aa kurhattanan di chaaahn kiven?</p>
+                <p class="lyrics-line" data-annotation-id="v1-g23">dil’ch koi mail nhi tan pith deni faarh kihne?</p>
+                <p class="lyrics-line" data-annotation-id="v1-g24">mandar aa chit jih’ch rakhe malaal ihne</p>
+                <p class="lyrics-line" data-annotation-id="v1-g24">farhni aa kihne je adden na baahn veere?</p>
+                <p class="lyrics-line" data-annotation-id="v1-g25">nakaara nakaabal naseeb di swaari</p>
+                <p class="lyrics-line" data-annotation-id="v1-g25">nadaan ah nawaajab aa neend di khumari</p>
+                <p class="lyrics-line" data-annotation-id="v1-g26">salaahan lutaawein masihe dhyaawein</p>
+                <p class="lyrics-line" data-annotation-id="v1-g26">je aide syaane tan haasil mukaam kinne?</p>
+                <p class="lyrics-line p-2 mt-4 rounded-lg italic text-gray-400">[Manjot’s (A friend of Anshul) voicemail plays in detail, he is rebuking Anshul for not picking his call and asking where he’s been]</p>
+            </div>
+        </section>
+    </div>
+
+    <aside id="annotation-panel" class="flex flex-col">
+        <header class="p-4 border-b flex items-center justify-between" style="border-color: var(--border-color);">
+            <div id="panel-header-content" class="flex-grow mr-4">
+            </div>
+            <button id="close-annotation" class="close-button flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </header>
+        <div id="annotation-content-area" class="annotation-content">
+        </div>
+    </aside>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+             const annotations = { "v1-g1": "Anshul immediately confesses to holding his third diet coke of the day, a striking detail that underscores a profound struggle with <strong>self-control and moderation</strong>. He openly declares himself a 'sugar addict' and admits to feeling 'very high' as a result. These lines vividly establish themes of a lack of self-discipline and the intoxicating effects of destructive habits.", "v1-g2": "Anshul declares he has been 'lost since the age of 16.' This line draws a specific <strong>parallel</strong> to Ganesh Gaitonde, a notorious crime lord from the TV series 'Sacred Games,' who was famously missing for 16 years. Anshul's use of 'since' highlights his own profound and enduring state of internal disorientation that originated from his youth. This culminates in a desperate plea for an 'early death,' expressing extreme hopelessness.", "v1-g3": "Anshul explicitly links his 'penis in his right hand to his downfall,' creating a striking, symmetrical <strong>parallel</strong> to the 'diet coke in his left hand' from the song's opening. This juxtaposition powerfully symbolizes a struggle with various, equally potent, and self-sabotaging destructive habits. He then reveals he 'skipped work,' illustrating active procrastination.", "v1-g4": "Anshul directly confesses his 'crippling laziness' and his aversion to work. This is immediately followed by his nighttime indulgence: 'calling Filipinas on OKC, a dating app.' These actions highlight a pattern of self-sabotage and pursuit of fleeting gratification.", "v1-g5": "Anshul reveals his late-night state: 'Kaushal is horny at 11 PM.' Yet, he has 'found 10 (women) and texted ‘morning’.' This creates a clever <strong>contrast</strong>, implying he is texting women who are in different time zones where it is morning. This highlights his uncontrolled desires and self-indulgence that transcends geographical boundaries.", "v1-g6": "Anshul reflects on 'love letters' and other written 'scrolls' being 'wasted on his ex.' He then describes a specific act of digital self-sabotage: 'after seeing her pictures, he then scrolled on X.' This line also employs a clever <strong>homophone</strong>, playing on the sound of 'ex te scroll' (wasted on his ex) and 'X te scroll' (scrolling on the platform X).", "v1-g7": "Anshul observes a painful <strong>paradox</strong>: 'as his physical stature grew, the number of people who look up to him (in admiration) diminished.' A clever <strong>homophone</strong> is employed here between 'ghati aa bheerh' (the crowd has lessened) and 'ghatiya peerh' (bad pain), intensifying the sense of loss and distress.", "v1-g8": "Anshul describes a moment of violent frustration where the 'mirror is broken, and his knuckles are bleeding.' This raw act of physical anguish is immediately followed by a profound admission: 'But whose fault is this? It's my mistake, brother.' This scene powerfully combines the recurring <strong>mirror motif</strong> with explicit self-blame.", "v1-g9": "Anshul faces workplace consequences, as 'no argument works today in front of the manager,' due to his admission of 'doing more ‘slack’ and less ‘Teams’.' This line features clever <strong>wordplay</strong>: 'slack' simultaneously means being lazy and refers to the communication tool Slack, while 'Teams' refers specifically to MS Teams.", "v1-g10": "Anshul logged only '10 hours' for work, leaving '30 hours' unlogged because he was 'napping at work' and 'couldn't sleep at night.' This directly explains why 'no argument works today in front of the manager' and reveals profound laziness and self-sabotage.", "v1-g11": "Anshul conveys a profound sense of being 'drowned in his parents' debt,' not financially, but as an overwhelming feeling of <strong>moral obligation and gratitude</strong> for their sacrifices. He fears he cannot 'even pay the ‘interest’ (basic expectations), let alone the ‘installments’ (full repayment)' of this emotional debt.", "v1-g12": "Anshul states that his parents' 'dreams bleed daily.' This powerfully signifies the <strong>emotional toll</strong> his perceived failures are taking on them, directly stemming from his unfulfilled moral obligation and gratitude.", "v1-g13": "Anshul confesses he 'cannot manage encounters with strong winds,' clarifying that this is the 'form the truth takes.' This means he struggles to confront the harsh realities and difficult truths of his life, highlighting his emotional fragility.", "v1-g14": "Anshul explains that he impulsively seeks to improve his present day, focusing on short-term happiness. With his desires as the sole governing force, this approach leads him to undermine his future, spoiling his long-term well-being. This reveals a profound lack of self-control.", "v1-g15": "Anshul states he 'ploughs barren land,' signifying that he knowingly invests effort into activities that, despite consuming time and energy, produce no constructive outcome. This suggests a deliberate engagement in <strong>futile endeavors</strong>, such as excessive digital distractions.", "v1-g16": "Anshul conveys that his pen, representing his writing, feels as though it has 'lost its edge.' This could be interpreted as a <strong>defeatist mindset</strong>, suggesting Anshul perceives he has given up on fully realizing his artistic capabilities. This profound sense of 'bitter defeat' is evident in his writing.", "v1-g17": "Anshul observes that his 'inauthentic or emotionally detached outward displays make him appear untroubled or indifferent.' This indicates he is actively maintaining a <strong>facade of nonchalance</strong> to conceal his profound internal struggles.", "v1-g18": "Anshul presents a powerful <strong>metaphor</strong>: his inner world, engulfed in tumultuous flames of suffering, projects a radiance onto his face from the reflection of these intense fires. This outwardly reflected light is ironically misinterpreted by others as a carefree demeanor.", "v1-g19": "This line marks a pivotal shift where an externalized voice summarizes the artist's state: 'Anshul, let me summarize you.' By addressing himself by name, a technique also used in <strong>'Ganga'</strong> where Ganga addresses him, he creates a moment of stark, objective self-evaluation, as if one part of his psyche is diagnosing the other.", "v1-g20": "Following the previous line, an <strong>internal voice</strong> delivers a stark overview. It observes his mother calls him, demonstrating her care. This is immediately contrasted by a severe accusation from the voice to Anshul: 'and you demean her, you damned one.' The voice then intensifies its rebuke: 'You take your frustrations out on her, how dare you?'", "v1-g21": "The <strong>internal 'demon voice'</strong> states that 'relationships are conquered fortresses' and 'respect is a concubine to the capable/worthy.' This cynical worldview is a direct <strong>meta-reference</strong> to the outro of <strong>'Ganga'</strong>, where Anshul frames life as a 'battlefield of war' where 'power and influence dictated' all outcomes. This destructive worldview intensifies his 'KAID' (imprisonment).", "v1-g22": "The <strong>internal 'demon voice'</strong> continues its critique, accusing Anshul: 'Neither do you stand up for yourself nor for your dreams.' This is a direct <strong>meta-reference</strong> to the 'shapeless dreams' and indecision ('riding two boats') from <strong>'aakaarheen'</strong>, and his social withdrawal from <strong>'invisible man'</strong> where he 'hides himself in gatherings.' The line also calls back to the limited perspective ('gaze does not extend beyond these four walls') from <strong>'kaid'</strong>.", "v1-g23": "The <strong>internal 'demon voice'</strong> questions Anshul: 'How is he sitting in the shade of bitterness?' This is a <strong>meta-reference</strong> to the emotional suffering in <strong>'shaandaar'</strong>, identified as fuel for his writing. It then exposes his hypocrisy by contrasting his claim of inner purity in <strong>'jaan dao'</strong> ('no dust in my heart') with his vengeful intent from <strong>'aitbaar'</strong> ('tear open his back with a dagger').", "v1-g24": "The <strong>internal 'demon voice'</strong> sarcastically taunts: 'His mind is a temple in which he keeps grudges/regrets,' a <strong>meta-reference</strong> that exposes the hypocrisy between his claims of purity in <strong>'jaan dao'</strong> and his vengeful thoughts in <strong>'aitbaar'</strong>. The challenge to 'extend his arm' for help contrasts his self-imposed isolation in <strong>'invisible man'</strong> with his desperate plea in <strong>'losin' the plot'</strong>.", "v1-g25": "The <strong>internal 'demon voice'</strong> labels Anshul as 'useless, incapable, and merely relying on fate.' This is a <strong>meta-reference</strong> to <strong>'aitbaar'</strong> where he is 'relying on fate' and reflects the self-blame from <strong>'Ganga'</strong> and <strong>'loser'</strong>. The 'intoxication of sleep' links to the 'war lost to sleep' in <strong>'kaid'</strong> and 'sleeping during the day' in <strong>'losin' the plot'</strong>.", "v1-g26": "The <strong>internal 'demon voice'</strong> sarcastically describes Anshul as one who 'showers other people with advice,' implying a saviour complex. It then challenges this by pointing out his lack of personal achievements, a direct <strong>meta-reference</strong> to the 'shapeless dreams' in <strong>'aakaarheen'</strong> and his self-blame as a 'Loser' in <strong>'loser'</strong>." };
+            
+            const aboutSongButton = document.getElementById('about-song-button');
+            const lyricsLines = document.querySelectorAll('.lyrics-line');
+            const annotationPanel = document.getElementById('annotation-panel');
+            const panelHeaderContent = document.getElementById('panel-header-content');
+            const annotationContentArea = document.getElementById('annotation-content-area');
+            const closeButton = document.getElementById('close-annotation');
+            let activeAnnotationId = null;
+            let currentPanelState = null;
+
+            const aboutSongText = `
+                <p class="mb-4">It’s a diary entry from rock bottom. "degenerate" is a raw, unflinching inventory of a life in freefall: the third diet coke of the day, the skipped town hall for a night of empty scrolling, the bleeding knuckles in a broken mirror, the crushing weight of a "moral obligation" to his parents he knows he can't repay. But this decay is just the fertile ground for something worse to grow—the voice of his inner demon, finally taking control.</p>
+            `;
+
+            function showAboutContent() {
+                panelHeaderContent.innerHTML = `<h2 id="panel-header-title">About 'degenerate'</h2>`;
+                annotationContentArea.innerHTML = `<div class="p-6">${aboutSongText}</div>`;
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                    activeAnnotationId = null;
+                }
+                currentPanelState = 'about';
+                annotationPanel.classList.add('visible');
+            }
+
+            function showAnnotationContent(lineElement) {
+                const annotationId = lineElement.getAttribute('data-annotation-id');
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                }
+                document.querySelectorAll(`[data-annotation-id='${annotationId}']`).forEach(el => el.classList.add('active'));
+                activeAnnotationId = annotationId;
+
+                const annotationText = annotations[annotationId] || "No annotation for this line.";
+                const groupElements = lineElement.parentElement.querySelectorAll(`[data-annotation-id='${annotationId}']`);
+                const sourceText = Array.from(groupElements).map(el => el.innerHTML).join('<br>');
+
+                panelHeaderContent.innerHTML = `<p class="source-lyric p-3 rounded-lg text-sm">${sourceText}</p>`;
+                annotationContentArea.innerHTML = `<div class="p-6">${annotationText}</div>`;
+                currentPanelState = 'annotation';
+                annotationPanel.classList.add('visible');
+            }
+
+            function closeAnnotationPanel() {
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                    activeAnnotationId = null;
+                }
+                annotationPanel.classList.remove('visible');
+                currentPanelState = null;
+            }
+
+            aboutSongButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (annotationPanel.classList.contains('visible') && currentPanelState === 'about') {
+                    closeAnnotationPanel();
+                } else {
+                    showAboutContent();
+                }
+            });
+
+            lyricsLines.forEach(line => {
+                line.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const clickedAnnotationId = line.getAttribute('data-annotation-id');
+                    if (clickedAnnotationId === activeAnnotationId) {
+                        closeAnnotationPanel();
+                    } else {
+                        showAnnotationContent(line);
+                    }
+                });
+            });
+
+            closeButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeAnnotationPanel();
+            });
+
+            document.body.addEventListener('click', (e) => {
+                if (annotationPanel.classList.contains('visible') && !annotationPanel.contains(e.target) && !aboutSongButton.contains(e.target)) {
+                    closeAnnotationPanel();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

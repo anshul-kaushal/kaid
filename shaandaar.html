@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shaandaar - Annotated Lyrics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-dark: #000000;
+            --surface-color: #201A28; 
+            --text-primary: #e2e2e2;
+            --text-secondary: #888888;
+            --border-color: #3a2a4a; 
+            --album-identity-color: #9333ea; 
+            --hover-accent-color: rgba(147, 51, 234, 0.15); 
+            --icon-color-light-purple: #b298dc; 
+        }
+        body {
+            font-family: 'Lora', serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+        }
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--background-dark); }
+        ::-webkit-scrollbar-thumb { background-color: #581c87; border-radius: 8px; border: 2px solid var(--background-dark); }
+        .main-container { max-width: 768px; }
+        .lyrics-header h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--album-identity-color);
+        }
+        .lyrics-line {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .lyrics-line:hover {
+            background-color: var(--hover-accent-color);
+            color: var(--text-primary);
+        }
+        .lyrics-line.active {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            font-weight: 600;
+        }
+        .verse-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+        }
+        #annotation-panel {
+            background-color: var(--surface-color);
+            border-left: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 550px;
+            height: 100vh;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+            z-index: 50;
+            font-family: 'Inter', sans-serif;
+        }
+        #annotation-panel.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        /* #panel-header-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--primary-accent-color);
+        } */
+        .annotation-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+        .source-lyric {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            font-weight: 600;
+        }
+        
+        .close-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: transparent;
+            color: var(--icon-color-light-purple);
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .close-button:hover {
+            background-color: var(--album-identity-color);
+            color: #fff;
+        }
+        .close-button svg {
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: rgba(32, 26, 40, 0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: var(--icon-color-light-purple);
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+        }
+        .back-button:hover {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            transform: scale(1.05);
+        }
+        .back-button svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .about-button-expand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            height: 2.5rem;
+            padding: 0 0.75rem;
+            border-radius: 999px;
+            background-color: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            overflow: hidden;
+        }
+        .about-button-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            width: 0;
+            transition: width 0.4s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.2s ease;
+        }
+        .about-button-expand:hover {
+            background-color: var(--surface-color);
+            color: var(--text-primary);
+            border-color: var(--primary-accent-color);
+        }
+        .about-button-expand:hover .about-button-text {
+            width: 50px;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .lyrics-line { font-size: 1rem; line-height: 1.7; }
+            #annotation-panel {
+                top: auto;
+                bottom: 0;
+                width: 100%;
+                max-width: 100%;
+                height: 60vh;
+                transform: translateY(100%);
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+                border-top-left-radius: 20px;
+                border-top-right-radius: 20px;
+            }
+            #annotation-panel.visible { transform: translateY(0); }
+            .back-button { top: 1rem; left: 1rem; width: 2.5rem; height: 2.5rem; }
+            .back-button svg { width: 1.25rem; height: 1.25rem; }
+        }
+    </style>
+</head>
+<body class="">
+    <a href="index.html" class="back-button" aria-label="Back to main page">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+    </a>
+        
+    <div class="main-container px-6 py-12 md:px-12 md:py-24">
+        <header class="lyrics-header mb-12">
+            <div class="flex items-center gap-4">
+                <h1 class="text-5xl md:text-6xl font-bold mb-0">shaandaar</h1>
+                <button id="about-song-button" class="about-button-expand" aria-label="About this song">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="about-button-text">About</span>
+                </button>
+            </div>
+            <h2 class="text-xl text-gray-400 mt-2">Annotated Lyrics</h2>
+        </header>
+
+        <section id="lyrics-content">
+            <h3 class="verse-title">Verse 1</h3>
+            <div id="lyrics-v1" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="v1-group-1">pick karan beat phir mai spit karan heat</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-1">life meri dry par spit karan neat</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">kade hoya ni mai high, par spit karan weed</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">jihdi latt ehni bhairhi ki mai skip karan neend</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-3">laake loop ve repeat te mai flow karan tweak</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-3">je delivery’oo weak redo karan sync</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-4">rehenda khunda, bacheya koi issue kare click</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-4">ohnu karda refine har line navi peak</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-5">par karan na release, ni mera maksat hor</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-5">karan vent jihdi paindi aksar lorh</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-6">har shabd har bol,</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-6">jiven dastak oh ohna taakatan layi jo ik rasta khod</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-6">baithe bana khud mere andar jo</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-6">dar, aalas, garv naale nafrat lobh</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-6">sab kalam de agge natmastak hon</p>
+            </div>
+            
+            <h3 class="verse-title">Hook</h3>
+            <div id="lyrics-hook-1" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="hook-group-1">kurhattan di chaahn’ch ni, vassdi mahaanta</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">kurhattan de raah challe saathiyaan begaaniyaan nu pain lakh laahnta</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">satt vachan eh vi par, likhaari hunda Kaushal aam ja</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">je dil’ch kurhattan na bhaalda</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">likhaayi kiven meri hundi shaandaar?</p>
+            </div>
+
+            <h3 class="verse-title">Verse 2</h3>
+            <div id="lyrics-v2" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="v2-group-1">dekho, mere andar ikk loh</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-1">jehri jaandi odon bujh jadon bhaari hoje soch</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-2">ve guilt trips utte menu laike jaandi roz</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-2">har duje kadam te mere karan sankoch</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-3">ohdi chakki ni call mai, sochuga ki?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-3">ohnu kehti jo naa mai, kosuga ki?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-4">theek kiti mai parking?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-4">bolunga ki? ohde agge jo naar ik sohni laggi</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-5">ehi zindagi da dal-dal</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-5">jih’ch hoya trap meri rooh mere pal-pal</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-6">likheya mai verse beeline kare harkat</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-6">cheekhde khyaal lagan dur di koi barh-barh</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-7">hundi khaali khaayi pher lit</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-7">jdon kore kaagazan te ral jaaye meri wit</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-8">rahan sane tanhi karda likhaayi mai nit</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-8">charnan’ch bahuteyan di chaudharaayi davan midh</p>
+            </div>
+            
+            <h3 class="verse-title">Hook</h3>
+            <div id="lyrics-hook-2" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="hook-group-1">kurhattan di chaahn’ch ni, vassdi mahaanta</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">kurhattan de raah challe saathiyaan begaaniyaan nu pain lakh laahnta</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">satt vachan eh vi par, likhaari hunda Kaushal aam ja</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">je dil’ch kurhattan na bhaalda</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">likhaayi kiven meri hundi shaandaar?</p>
+            </div>
+
+            <h3 class="verse-title">Verse 3</h3>
+            <div id="lyrics-v3" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="v3-group-1">reha sada background’ch</p>
+                <p class="lyrics-line" data-annotation-id="v3-group-1">mera chehra aam koi packed crowd’ch</p>
+                <p class="lyrics-line" data-annotation-id="v3-group-2">mai te misunderstood, jiven cat-mouse</p>
+                <p class="lyrics-line" data-annotation-id="v3-group-2">aarop daleelan dissan backdrop’ch</p>
+                <p class="lyrics-line" data-annotation-id="v3-group-3">halaat banaun insaan, banaun takdeer, banaun pehchaan</p>
+                <p class="lyrics-line" data-annotation-id="v3-group-3">te mai jazbaat lako rahwan shaant</p>
+                <p class="lyrics-line" data-annotation-id="v3-group-3">na karda byaan vichaar jo aaun</p>
+                <p class="lyrics-line" data-annotation-id="v3-group-4">mai passive aggressive tan demeanor calm</p>
+                <p class="lyrics-line" data-annotation-id="v3-group-5">par andar niraasha da vassda tufaan</p>
+                <p class="lyrics-line" data-annotation-id="v3-group-6">dabaunda ni khyaalan’ nu dinda ubaal</p>
+                <p class="lyrics-line" data-annotation-id="v3-group-7">kurhattan’ch dinda niraasha nu dhaal</p>
+                <p class="lyrics-line" data-annotation-id="v3-group-8">bina koi setback hun aaunda ni swaad</p>
+                <p class="lyrics-line" data-annotation-id="v3-group-9">kaviyaan layi dukhrhe hi bannde auzaar</p>
+                <p class="lyrics-line" data-annotation-id="v3-group-10">tu likhda aa shor, mai likhda aa neher</p>
+                <p class="lyrics-line" data-annotation-id="v3-group-11">teri kalam’ch paani te meri’ch zeher</p>
+            </div>
+            
+            <h3 class="verse-title">Hook</h3>
+            <div id="lyrics-hook-3" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="hook-group-1">kurhattan di chaahn’ch ni, vassdi mahaanta</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">kurhattan de raah challe saathiyaan begaaniyaan nu pain lakh laahnta</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">satt vachan eh vi par, likhaari hunda Kaushal aam ja</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">je dil’ch kurhattan na bhaalda</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">likhaayi kiven meri hundi shaandaar?</p>
+            </div>
+        </section>
+    </div>
+
+    <aside id="annotation-panel" class="flex flex-col">
+        <header class="p-4 border-b flex items-center justify-between" style="border-color: var(--border-color);">
+            <div id="panel-header-content" class="flex-grow mr-4">
+            </div>
+            <button id="close-annotation" class="close-button flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </header>
+        <div id="annotation-content-area" class="annotation-content">
+        </div>
+    </aside>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+             const annotations = { "v1-group-1": "Anshul's art is powerful ('spits heat') despite his 'dry' and emotionally barren life. The phrase 'my life is dry' is a double entendre, suggesting both an absence of joy and a metaphorical 'dry county' where intoxication is absent. However, he 'spits neat,' meaning his rap is a pure, undiluted product of his raw emotions, without needing a conventional 'high.' This establishes the core theme: his art is a therapeutic outlet that transforms his personal bitterness into a powerful, unadulterated expression.", "v1-group-2": "Anshul states he has 'never been high' but 'spits weed,' suggesting his art is his intoxication. He is so addicted to writing that he 'skips sleep,' showing his profound commitment, a sentiment echoed by his Jay-Z reference in 'aakaarheen.'", "v1-group-3": "He meticulously 'tweaks his flow' and 'redoes the sync' to perfect his rap delivery, showing his dedicated, self-critical pursuit of excellence. This disciplined effort transforms his inner turmoil into 'splendid writing.'", "v1-group-4": "Anshul explains that he refines 'any remaining, leftover issue' in his work, ensuring 'every line reaches a new peak.' This highlights his obsessive attention to detail and unwavering commitment to his craft, transforming personal issues into creative triumphs.", "v1-group-5": "He reveals his primary purpose is not public release, but to 'vent, for which there is often a need.' This aligns with the recurring theme of unreleased art on the album and underscores how his writing serves as a crucial outlet for his internal struggles and 'bitterness.'", "v1-group-6": "He metaphorically describes his words as a 'knock' that confronts the internal 'monsters' of 'fear, laziness, pride, hatred, and greed' that 'make a burrow inside' him. His pen subdues these internal demons, making his art a coping mechanism to control his emotional 'kaid' (imprisonment).", "hook-group-1": "This hook presents a central paradox: Anshul's writing is 'splendid' because it is fueled by his personal 'bitterness' ('kurhattan'). He argues he would be 'an ordinary writer' without it, explicitly identifying his internal struggles as the indispensable fuel for his powerful, cathartic art.", "v2-group-1": "Anshul uses the metaphor of an internal 'flame' that 'extinguishes when thoughts become heavy.' This symbolizes how overthinking and mental burden stifle his inner passion and drive, reflecting the album's theme of being 'trapped in these thoughts.'", "v2-group-2": "These lines describe the paralyzing effects of his 'heavy thoughts,' which lead to daily 'guilt trips' and chronic 'hesitation.' This illustrates his emotional 'kaid' (imprisonment) by his own mind, preventing him from taking action and reinforcing his mental burden.", "v2-group-3": "Anshul reveals his social anxiety and fear of judgment by questioning the consequences of his actions: 'What will she think?' because he didn't take her call, and 'what will she curse me for?' after he told her 'no.'", "v2-group-4": "He highlights his extreme anxiety and overthinking by questioning if he 'parked correctly' and by asking himself, 'What will I say?' to an attractive woman. These trivial and social anxieties show his mind is constantly active and self-scrutinizing.", "v2-group-5": "He describes life as a 'swamp' that has trapped his soul and is 'dying every moment.' This metaphor powerfully summarizes his constant struggle with emotional and psychological decline, reinforcing why he needs his art as a coping mechanism.", "v2-group-6": "He describes how writing a verse makes his soul 'make a beeline motion,' like a flatlining monitor regaining a pulse. His 'screaming thoughts' become a 'distant, indistinct noise,' signifying that his art revives him and provides liberation from his internal turmoil.", "v2-group-7": "Anshul elaborates on the revitalizing power of his art. He states that an 'empty internal void becomes lit again' when his 'wit merges with blank papers.' This reinforces how the creative act fills his emotional emptiness, providing a sense of vitality and reversing his mental decline.", "v2-group-8": "Anshul states he writes daily 'to remain sane,' and that with his pen, he 'crushes the dominance of many.' This shows his writing is both a crucial coping mechanism and a tool of empowerment, allowing him to assert his will against external pressures.", "v3-group-1": "Anshul describes feeling anonymous and unremarkable, always in the 'background' with an 'ordinary face in a packed crowd.' This connects to his feeling of being an 'invisible man' and his struggles with self-perception and social anxiety.", "v3-group-2": "He feels constantly misunderstood, like a 'cat chasing a mouse,' and describes 'accusations and arguments' as a constant 'backdrop' in his life. This highlights the external judgment and social toxicity that contribute to his emotional 'kaid' (imprisonment).", "v3-group-3": "Anshul observes that 'circumstances shape a person's destiny,' and in response, he 'hides his emotions' and remains outwardly 'calm.' This demonstrates his use of a facade to cope with external pressures, which leads to his psychological imprisonment.", "v3-group-4": "Anshul explicitly states he is 'passive-aggressive' and that's why his demeanor is 'calm.' This reveals his coping mechanism: he channels unexpressed emotions into a subtle form of resistance instead of direct confrontation.", "v3-group-5": "He reveals that despite his calm demeanor, a 'storm of despair resides inside.' This contrasts his outward tranquility with a profound internal turmoil, highlighting his emotional and psychological 'kaid' (imprisonment) by suppressed feelings.", "v3-group-6": "He states he doesn't suppress his thoughts but 'lets them boil,' signifying an active, intense processing of his internal chaos. This 'boiling' is the raw material that he channels into his creative output.", "v3-group-7": "Anshul makes a key philosophical statement: he 'moulds despair into bitterness,' which then fuels his art. This bitterness is the 'poison' he puts into his pen, showing how he actively transforms his negative emotions into creative energy.", "v3-group-8": "He reveals a significant psychological shift: he 'no longer finds enjoyment without a setback.' This paradox shows how adversity has become a necessary catalyst for his creative process, as he has learned to transform struggle into a source of fulfillment.", "v3-group-9": "He directly states his artistic philosophy: 'for poets, sorrows themselves become tools.' This is the core of his creative process, where he transforms his internal suffering into instruments for his art.", "v3-group-10": "Anshul asserts his artistic superiority by contrasting his work with others: 'you write noise, I write a river.' This implies his work has depth, a powerful flow, and continuous impact, unlike the superficiality of others.", "v3-group-11": "He concludes with a final contrast: 'your pen has water, and mine has poison.' 'Water' signifies diluted, common writing, while his 'poison' represents the bitterness and turmoil that makes his art unique, potent, and impactful." };
+
+            const aboutSongButton = document.getElementById('about-song-button');
+            const lyricsLines = document.querySelectorAll('.lyrics-line');
+            const annotationPanel = document.getElementById('annotation-panel');
+            const panelHeaderContent = document.getElementById('panel-header-content');
+            const annotationContentArea = document.getElementById('annotation-content-area');
+            const closeButton = document.getElementById('close-annotation');
+            let activeAnnotationId = null;
+            let currentPanelState = null;
+
+            const aboutSongText = `
+                <p class="mb-4">Others write with water. He writes with poison. "shaandaar" is the moment Anshul stops being a victim of his pain and begins to wield it as a weapon. He doesn't just endure his "screaming thoughts"; he channels them into a lyrical "river" with unstoppable force. The magnificent quality of his art isn't created in spite of his suffering—it's forged directly from it. This is the sound of an artist sharpening his sorrows on a whetstone and calling the result beautiful.</p>
+            `;
+
+            function showAboutContent() {
+                panelHeaderContent.innerHTML = `<h2 id="panel-header-title">About 'loser'</h2>`;
+                annotationContentArea.innerHTML = `<div class="p-6">${aboutSongText}</div>`;
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                    activeAnnotationId = null;
+                }
+                currentPanelState = 'about';
+                annotationPanel.classList.add('visible');
+            }
+
+            function showAnnotationContent(lineElement) {
+                const annotationId = lineElement.getAttribute('data-annotation-id');
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                }
+                document.querySelectorAll(`[data-annotation-id='${annotationId}']`).forEach(el => el.classList.add('active'));
+                activeAnnotationId = annotationId;
+
+                const annotationText = annotations[annotationId] || "No annotation for this line.";
+                const groupElements = lineElement.parentElement.querySelectorAll(`[data-annotation-id='${annotationId}']`);
+                const sourceText = Array.from(groupElements).map(el => el.innerHTML).join('<br>');
+
+                panelHeaderContent.innerHTML = `<p class="source-lyric p-3 rounded-lg text-sm">${sourceText}</p>`;
+                annotationContentArea.innerHTML = `<div class="p-6">${annotationText}</div>`;
+                currentPanelState = 'annotation';
+                annotationPanel.classList.add('visible');
+            }
+
+            function closeAnnotationPanel() {
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                    activeAnnotationId = null;
+                }
+                annotationPanel.classList.remove('visible');
+                currentPanelState = null;
+            }
+
+            aboutSongButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (annotationPanel.classList.contains('visible') && currentPanelState === 'about') {
+                    closeAnnotationPanel();
+                } else {
+                    showAboutContent();
+                }
+            });
+
+            lyricsLines.forEach(line => {
+                line.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const clickedAnnotationId = line.getAttribute('data-annotation-id');
+                    if (clickedAnnotationId === activeAnnotationId) {
+                        closeAnnotationPanel();
+                    } else {
+                        showAnnotationContent(line);
+                    }
+                });
+            });
+
+            closeButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeAnnotationPanel();
+            });
+
+            document.body.addEventListener('click', (e) => {
+                if (annotationPanel.classList.contains('visible') && !annotationPanel.contains(e.target) && !aboutSongButton.contains(e.target)) {
+                    closeAnnotationPanel();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,781 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invisible Man - Annotated Lyrics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-dark: #000000;
+            --surface-color: #201A28; 
+            --text-primary: #e2e2e2;
+            --text-secondary: #888888;
+            --border-color: #3a2a4a; 
+            --album-identity-color: #9333ea; 
+            --hover-accent-color: rgba(147, 51, 234, 0.15); 
+            --icon-color-light-purple: #b298dc; 
+        }
+        body {
+            font-family: 'Lora', serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+        }
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--background-dark); }
+        ::-webkit-scrollbar-thumb { background-color: #581c87; border-radius: 8px; border: 2px solid var(--background-dark); }
+        .main-container { max-width: 768px; }
+        .lyrics-header h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--album-identity-color);
+        }
+        .lyrics-line {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .lyrics-line:hover {
+            background-color: var(--hover-accent-color);
+            color: var(--text-primary);
+        }
+        .lyrics-line.active {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            font-weight: 600;
+        }
+        .verse-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+        }
+        #annotation-panel {
+            background-color: var(--surface-color);
+            border-left: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 550px;
+            height: 100vh;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+            z-index: 50;
+            font-family: 'Inter', sans-serif;
+        }
+        #annotation-panel.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        .annotation-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+        .source-lyric {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            font-weight: 600;
+        }
+        
+        .close-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: transparent;
+            color: var(--icon-color-light-purple);
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .close-button:hover {
+            background-color: var(--album-identity-color);
+            color: #fff;
+        }
+        .close-button svg {
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: rgba(32, 26, 40, 0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: var(--icon-color-light-purple);
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+        }
+        .back-button:hover {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            transform: scale(1.05);
+        }
+        .back-button svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .lyrics-line { font-size: 1rem; line-height: 1.7; }
+            #annotation-panel {
+                top: auto;
+                bottom: 0;
+                width: 100%;
+                max-width: 100%;
+                height: 60vh;
+                transform: translateY(100%);
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+                border-top-left-radius: 20px;
+                border-top-right-radius: 20px;
+            }
+            #annotation-panel.visible { transform: translateY(0); }
+            .back-button { top: 1rem; left: 1rem; width: 2.5rem; height: 2.5rem; }
+            .back-button svg { width: 1.25rem; height: 1.25rem; }
+        }
+    </style>
+</head>
+<body class="">
+    <a href="index.html" class="back-button" aria-label="Back to main page">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+    </a>
+        
+    <div class="main-container px-6 py-12 md:px-12 md:py-24">
+        <header class="lyrics-header mb-12">
+            <h1 class="text-5xl md:text-6xl font-bold mb-2">invisible man</h1>
+            <h2 class="text-xl text-gray-400">Annotated Lyrics</h2>
+        </header>
+
+        <section id="lyrics-content">
+            <h3 class="verse-title">Verse 1</h3>
+            <div id="lyrics-v1" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="v1-group-1">tira chaudha ghat</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-1">ho jithe jameya paleya siga Maula jatt</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-1">ohi mitti di tun den kiddan?</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">rang kaala teri surat Afreeki</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">tu tan dassan’ch disse na je na hunda koi kareebi</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-3">ethe shabdan da mull tere karm do aane</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-3">jiven desi daaru ruldi videsi mehkhaane</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-4">tera hath uthe pehlan vekh dhille modheyan nu</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-4">par jag behisaabi behke kole na taraashe</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-5">tan hi dukh’ch vicharda tu kalla</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-5">ehne jeeyan’ch vi rehke shihse agge karein gallan</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-6">meri gal karan puri teri gal addhi kattan</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-6">meri gal aa zuroori teri gallan nil batta</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-7">tera kita aa adikh par chuppi paarhe kan</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-7">bhaav ehsaan tere kite sada lagde aa ghat</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-8">rukhapan ikk vaar da vi jareya kyun jaawe</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-8">je asaan zyaada maila tera dassna aa man</p>
+            </div>
+            
+            <h3 class="verse-title">Hook</h3>
+            <div id="lyrics-hook-1" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="h1-group-1">dissda zeher menu, disse na mai menu (can you see me?)</p>
+                <p class="lyrics-line" data-annotation-id="h1-group-1">akh de kone’chon ve disse eh kehra shaks? (can you see me?)</p>
+                <p class="lyrics-line" data-annotation-id="h1-group-1">dissda nhera menu, disse na chehra menu (can you see me?)</p>
+                <p class="lyrics-line" data-annotation-id="h1-group-1">akh de kone’cho ve jdon dikh jaawe aks (can you see me?)</p>
+            </div>
+
+            <h3 class="verse-title">Verse 2</h3>
+            <div id="lyrics-v2" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="v2-group-1">chaale meri deh te eh tikhiyaa zabaanan de</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-1">jo aankde ne ghat te na mangiyan salaahan de</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-2">sang de daboche hoye lakhaan armaanan de</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-2">ginnke ve foot vich aj te khwaaban de</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-3">bhulawein tereyaan’ch meri ruldi saugaatan de</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-3">chamrhi eh kaali chaarh dass kithe jaawan mai?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-4">tippni jihte ne modheyan’ch aisi dhil paayi</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-4">kath ton mai bhajaan dass sach kyun lukaawan eh</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-5">ho mera rang meri shaan</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-5">ehi rang range pairan’ch loki labhde ne ram</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-6">bas ehi chubhda khyaal ki mera rang auzaar</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-6">ban menu neecha vkhaaun da kam karda asaan</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-7">ohna lokan layi jo manda kehke dassde mazaak</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-7">saalan sochan eh makhaul yan dassde aukaat</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-8">jehri dilli sochi baithe changa karke hisaab</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-8">jehri wandh dhi dovan nu rekha kar lao ijaad</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-9">naale dukh’ch, jo vicharda aa kalla</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-9">jehra sunna na chahwe ohnu dil di ki dassan</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-10">sunan aaleyan ne utton bahniyan umeedan lakhan</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-10">oo aasavan nu na kattan, shishe agge kharha hassan</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-11">tan hi dukh’ch, vicharda mai kalla</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-11">dukh peerh jehri palle ban dler mathi chakkan</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-12">jo na dil’ch vasaaye ohde naal hyumai rakhan</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-12">ohde chit’ch bewaaste de vehem pakke chaddan</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-13">methon lukkda ni, tuhaadi nazran da jhol</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-13">modhe hath rakh, ghat mera launde jehre mol</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-14">bahuti jangan andruuni, tanhi kar jaanda ghaul</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-14">nhi tan bund ni mai maaran je vigharda mahaul</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-15">himmatan di kami ni ba soch lainda zyaada</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-15">khud de zameer nu kharoch lainda zyaada</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-16">mat kalaakari khud nu tatol lainda zyaada</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-16">Kaushal mehfila ton khud nu lako lainda zyaada</p>
+            </div>
+            
+            <h3 class="verse-title">Hook</h3>
+            <div id="lyrics-hook-2" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="h2-group-1">dissda zeher menu, disse na mai menu (you can’t see me)</p>
+                <p class="lyrics-line" data-annotation-id="h2-group-1">akh de kone’chon ve disse eh kehra shaks? (you can’t see me)</p>
+                <p class="lyrics-line" data-annotation-id="h2-group-1">dissda nhera menu, disse na chehra menu (you can’t see me)</p>
+                <p class="lyrics-line" data-annotation-id="h2-group-1">akh de kone’cho ve jdon dikh jaawe aks (you can’t see me)</p>
+            </div>
+        </section>
+    </div>
+
+    <aside id="annotation-panel" class="flex flex-col">
+        <header class="p-4 border-b flex items-center justify-between" style="border-color: var(--border-color);">
+            <p class="source-lyric p-3 rounded-lg text-sm flex-grow mr-4">Source Lyric</p>
+            <button id="close-annotation" class="close-button flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </header>
+        <div id="annotation-content-area" class="annotation-content p-6 overflow-y-auto flex-grow">
+        </div>
+    </aside>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+             const annotations = {
+                // CHANGE: Corrected annotation keys
+                "v1-group-1": "These lines convey others' critical remarks to Anshul about his physical stature. This perceived inadequacy is contrasted with the formidable legacy of Maula Jatt, a figure of immense strength from the same soil. They question Anshul's belonging, asking, 'How are you a gift of that same soil?' This external judgment fosters his inner isolation and feeling of being invisible.",
+                "v1-group-2": "Anshul faces judgments about his appearance, with remarks on his dark complexion and 'face like an African.' These comments imply he lacks presence and is easily overlooked unless explicitly connected by kinship. Such evaluations fuel Anshul's inner isolation and contribute to his feeling of being an 'invisible man.'",
+                "v1-group-3": "This highlights a societal observation where words are valued more than actions, with Anshul's deeds being regarded as worthless. This is illustrated by a metaphor comparing him to local liquor wasted in a foreign bar, underscoring his perceived misplacement and devaluation within his environment.",
+                "v1-group-4": "The remarks convey that Anshul consoles people in need, but this selflessness is met with indifference, as the world does not refine him in return. The word 'kole' (coal) powerfully connects this lack of refinement to the colorism Anshul has faced, reinforcing how he is left unpolished despite his compassion.",
+                "v1-group-5": "Due to ongoing disregard, Anshul 'wanders alone in sorrow.' Even when surrounded by many, he is so profoundly isolated that he talks to himself in front of a mirror, vividly portraying his deep inner isolation and feeling of being unseen by others.",
+                "v1-group-6": "Anshul's statements are consistently cut short, and his contributions are dismissed as worthless, while others' words are deemed important. This highlights a pervasive pattern of his voice being silenced and devalued in conversations, reinforcing his sense of being disregarded.",
+                "v1-group-7": "The remarks highlight that Anshul's efforts are invisible, yet, paradoxically, his silence 'pierces ears,' implying that even his passive presence draws critical attention. This is compounded by the observation that his favors are always deemed to be of lesser value.",
+                "v1-group-8": "The remarks pose a rhetorical question: 'Why should even a single instance of rudeness be tolerated, if it is easy to say your heart is more dirty?' This indicates that Anshul is held to an impossibly high standard where any perceived misstep is deemed unacceptable due to underlying prejudice.",
+                "h1-group-1": "The hook conveys Anshul's crisis of self-recognition. The 'poison' and 'darkness' he sees are manifestations of negativity that obscure his own identity. The plea, (can you see me?), is both an external cry for acknowledgment and an internal reflection of being unable to affirm his own self, reinforcing his status as the 'invisible man.'",
+                "v2-group-1": "Anshul bears metaphorical 'wounds on his body' inflicted by the 'sharp tongues' and critical remarks from Verse 1, stemming from being undermined and receiving unsolicited, negative advice.",
+                "v2-group-2": "He has 'millions of aspirations suppressed by hesitation/shame,' a direct result of the external judgments. He feels his dreams are distant and perhaps unachievable, as if he is 'measuring them in feet,' highlighting how negativity has stifled his ambitions.",
+                "v2-group-3": "Anshul laments that his 'gifts or contributions are lost or forgotten' by a specific individual, adding a personal slight to his metaphorical wounds. He then profoundly asks, 'where should I go shedding this black skin?', conveying his desperation to escape the deep-seated prejudice associated with his complexion.",
+                "v2-group-4": "The constant 'commentary (criticism) on his black skin' has caused 'such a slackness in his shoulders,' signifying a heavy, debilitating burden. Because of this profound impact, he avoids gatherings and questions why he should have to hide this truth.",
+                "v2-group-5": "Anshul defiantly declares 'my color is my pride,' noting the irony that Ram, a revered deity, is found in 'feet of the same color,' a powerful reclamation of his identity against the prejudice he faces.",
+                "v2-group-6": "He reveals his distress that his color becomes a 'tool' to easily demean him by those who 'say mean things under the guise of a joke,' showing how humor is used to mask prejudice.",
+                "v2-group-7": "He has spent 'years wondering if this is a joke or if they are telling him his worth,' indicating the psychological toll of ambiguous, racially charged remarks that blur the line between mockery and genuine devaluation.",
+                "v2-group-8": "He implores those who make such remarks to 'invent the fine line that differentiates a harmless joke from an undermining mockery,' expressing his deep pain and exhaustion from enduring casual colorism.",
+                "v2-group-9": "Anshul reflects on his profound isolation, lamenting that 'in pain, he wanders alone.' He questions the point of expressing his feelings to an unresponsive audience, asking, 'to those who don't want to listen, what can I tell them from my heart?'",
+                "v2-group-10": "He acknowledges that those who do listen have placed 'millions of expectations' upon him. He resolves not to disappoint them, instead maintaining a facade of strength—'laughing in front of the mirror'—even as he privately suffers, highlighting the immense pressure to perform.",
+                "v2-group-11": "Anshul explicitly reiterates his profound isolation, stating, 'that's why in pain, I wander alone.' He reveals his resolve to 'bravely accept' the pain he carries, a courageous choice to bear his suffering privately, emphasizing the theme of emotional imprisonment.",
+                "v2-group-12": "Anshul describes his emotional stance: for 'those who don't hold him in their heart, he maintains an ego against them.' This indicates a deliberate emotional barrier erected as a self-protective mechanism. He actively ensures others perceive him as detached, ensuring that in their minds, he 'firmly instills the suspicion of indifference' to shield himself from further rejection or devaluation.",
+                "v2-group-13": "Anshul asserts that he can see through the 'deception in their gazes,' recognizing superficial support from those who 'place a hand on his shoulder but devalue him.'",
+                "v2-group-14": "He reveals that his hesitation to confront those who devalue him stems from his many 'internal wars.' He clarifies that it's not a lack of courage but these inner battles that cause him to 'dilly-dally' and avoid worsening the atmosphere.",
+                "v2-group-15": "Anshul clarifies that his hesitation stems 'not from a lack of courage,' but from overthinking, which causes him to 'scratch at his own conscience too much,' leading to intense self-reproach and internal struggle.",
+                "v2-group-16": "He explains that his artistic mind causes him to 'introspect too much.' This deep self-examination leads him to 'hide himself in gatherings too often,' encapsulating the theme of social withdrawal and his identity as an 'invisible man.'",
+                "h2-group-1": "This second hook confirms Anshul's crisis of identity, where he sees 'poison' and 'darkness' but not himself. Crucially, the parenthetical phrase shifts from a desperate query (can you see me?) to the definitive statement (you can’t see me). This change signifies a profound resignation and acceptance of his solitary fate, cementing his retreat into inner isolation and his role as the 'invisible man.'"
+            };
+
+            const lyricsLines = document.querySelectorAll('.lyrics-line');
+            const annotationPanel = document.getElementById('annotation-panel');
+            const annotationContentArea = document.getElementById('annotation-content-area');
+            const sourceLyricElement = annotationPanel.querySelector('.source-lyric');
+            const closeButton = document.getElementById('close-annotation');
+            
+            // CHANGE: Corrected script logic
+            let activeAnnotationId = null;
+
+            function openAnnotationPanel(lineElement) {
+                const annotationId = lineElement.getAttribute('data-annotation-id');
+                
+                if (activeAnnotationId) {
+                    document.querySelectorAll('.lyrics-line.active').forEach(el => el.classList.remove('active'));
+                }
+                
+                document.querySelectorAll(`[data-annotation-id='${annotationId}']`).forEach(el => el.classList.add('active'));
+                
+                activeAnnotationId = annotationId;
+
+                const annotationText = annotations[annotationId] || "Annotation coming soon.";
+                
+                const groupElements = document.querySelectorAll(`[data-annotation-id='${annotationId}']`);
+                const sourceText = Array.from(groupElements).map(el => el.innerHTML.replace(/<br>/g, '\n')).join('<br>');
+                
+                sourceLyricElement.innerHTML = sourceText;
+                annotationContentArea.innerHTML = annotationText;
+
+                annotationPanel.classList.add('visible');
+            }
+
+            function closeAnnotationPanel() {
+                if (activeAnnotationId) {
+                    document.querySelectorAll('.lyrics-line.active').forEach(el => el.classList.remove('active'));
+                    activeAnnotationId = null;
+                }
+                annotationPanel.classList.remove('visible');
+            }
+
+            lyricsLines.forEach(line => {
+                line.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const clickedAnnotationId = line.getAttribute('data-annotation-id');
+                    
+                    if (clickedAnnotationId === activeAnnotationId) {
+                        closeAnnotationPanel();
+                    } else {
+                        openAnnotationPanel(line);
+                    }
+                });
+            });
+
+            closeButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeAnnotationPanel();
+            });
+
+            document.body.addEventListener('click', (e) => {
+                if (annotationPanel.classList.contains('visible') && !annotationPanel.contains(e.target)) {
+                    closeAnnotationPanel();
+                }
+            });
+        });
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invisible Man - Annotated Lyrics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-dark: #000000;
+            --surface-color: #201A28; 
+            --text-primary: #e2e2e2;
+            --text-secondary: #888888;
+            --border-color: #3a2a4a; 
+            --album-identity-color: #9333ea; 
+            --hover-accent-color: rgba(147, 51, 234, 0.15); 
+            --icon-color-light-purple: #b298dc; 
+        }
+        body {
+            font-family: 'Lora', serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+        }
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--background-dark); }
+        ::-webkit-scrollbar-thumb { background-color: #581c87; border-radius: 8px; border: 2px solid var(--background-dark); }
+        .main-container { max-width: 768px; }
+        .lyrics-header h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--album-identity-color);
+        }
+        .lyrics-line {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .lyrics-line:hover {
+            background-color: var(--hover-accent-color);
+            color: var(--text-primary);
+        }
+        .lyrics-line.active {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            font-weight: 600;
+        }
+        .verse-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+        }
+        #annotation-panel {
+            background-color: var(--surface-color);
+            border-left: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 550px;
+            height: 100vh;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+            z-index: 50;
+            font-family: 'Inter', sans-serif;
+        }
+        #annotation-panel.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        .annotation-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+        .source-lyric {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            font-weight: 600;
+        }
+        
+        .close-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: transparent;
+            color: var(--icon-color-light-purple);
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .close-button:hover {
+            background-color: var(--album-identity-color);
+            color: #fff;
+        }
+        .close-button svg {
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: rgba(32, 26, 40, 0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: var(--icon-color-light-purple);
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+        }
+        .back-button:hover {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            transform: scale(1.05);
+        }
+        .back-button svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .about-button-expand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            height: 2.5rem;
+            padding: 0 0.75rem;
+            border-radius: 999px;
+            background-color: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            overflow: hidden;
+        }
+        .about-button-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            width: 0;
+            transition: width 0.4s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.2s ease;
+        }
+        .about-button-expand:hover {
+            background-color: var(--surface-color);
+            color: var(--text-primary);
+            border-color: var(--primary-accent-color);
+        }
+        .about-button-expand:hover .about-button-text {
+            width: 50px;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .lyrics-line { font-size: 1rem; line-height: 1.7; }
+            #annotation-panel {
+                top: auto;
+                bottom: 0;
+                width: 100%;
+                max-width: 100%;
+                height: 60vh;
+                transform: translateY(100%);
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+                border-top-left-radius: 20px;
+                border-top-right-radius: 20px;
+            }
+            #annotation-panel.visible { transform: translateY(0); }
+            .back-button { top: 1rem; left: 1rem; width: 2.5rem; height: 2.5rem; }
+            .back-button svg { width: 1.25rem; height: 1.25rem; }
+        }
+    </style>
+</head>
+<body class="">
+    <a href="index.html" class="back-button" aria-label="Back to main page">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+    </a>
+        
+    <div class="main-container px-6 py-12 md:px-12 md:py-24">
+        <header class="lyrics-header mb-12">
+            <div class="flex items-center gap-4">
+                <h1 class="text-5xl md:text-6xl font-bold mb-0">invisible man</h1>
+                <button id="about-song-button" class="about-button-expand" aria-label="About this song">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="about-button-text">About</span>
+                </button>
+            </div>
+            <h2 class="text-xl text-gray-400 mt-2">Annotated Lyrics</h2>
+        </header>
+
+        <section id="lyrics-content">
+            <h3 class="verse-title">Verse 1</h3>
+            <div id="lyrics-v1" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="v1-group-1">tira chaudha ghat</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-1">ho jithe jameya paleya siga Maula jatt</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-1">ohi mitti di tun den kiddan?</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">rang kaala teri surat Afreeki</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">tu tan dassan’ch disse na je na hunda koi kareebi</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-3">ethe shabdan da mull tere karm do aane</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-3">jiven desi daaru ruldi videsi mehkhaane</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-4">tera hath uthe pehlan vekh dhille modheyan nu</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-4">par jag behisaabi behke kole na taraashe</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-5">tan hi dukh’ch vicharda tu kalla</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-5">ehne jeeyan’ch vi rehke shihse agge karein gallan</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-6">meri gal karan puri teri gal addhi kattan</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-6">meri gal aa zuroori teri gallan nil batta</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-7">tera kita aa adikh par chuppi paarhe kan</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-7">bhaav ehsaan tere kite sada lagde aa ghat</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-8">rukhapan ikk vaar da vi jareya kyun jaawe</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-8">je asaan zyaada maila tera dassna aa man</p>
+            </div>
+            
+            <h3 class="verse-title">Hook</h3>
+            <div id="lyrics-hook-1" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="h1-group-1">dissda zeher menu, disse na mai menu (can you see me?)</p>
+                <p class="lyrics-line" data-annotation-id="h1-group-1">akh de kone’chon ve disse eh kehra shaks? (can you see me?)</p>
+                <p class="lyrics-line" data-annotation-id="h1-group-1">dissda nhera menu, disse na chehra menu (can you see me?)</p>
+                <p class="lyrics-line" data-annotation-id="h1-group-1">akh de kone’cho ve jdon dikh jaawe aks (can you see me?)</p>
+            </div>
+
+            <h3 class="verse-title">Verse 2</h3>
+            <div id="lyrics-v2" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="v2-group-1">chaale meri deh te eh tikhiyaa zabaanan de</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-1">jo aankde ne ghat te na mangiyan salaahan de</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-2">sang de daboche hoye lakhaan armaanan de</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-2">ginnke ve foot vich aj te khwaaban de</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-3">bhulawein tereyaan’ch meri ruldi saugaatan de</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-3">chamrhi eh kaali chaarh dass kithe jaawan mai?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-4">tippni jihte ne modheyan’ch aisi dhil paayi</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-4">kath ton mai bhajaan dass sach kyun lukaawan eh</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-5">ho mera rang meri shaan</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-5">ehi rang range pairan’ch loki labhde ne ram</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-6">bas ehi chubhda khyaal ki mera rang auzaar</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-6">ban menu neecha vkhaaun da kam karda asaan</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-7">ohna lokan layi jo manda kehke dassde mazaak</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-7">saalan sochan eh makhaul yan dassde aukaat</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-8">jehri dilli sochi baithe changa karke hisaab</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-8">jehri wandh dhi dovan nu rekha kar lao ijaad</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-9">naale dukh’ch, jo vicharda aa kalla</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-9">jehra sunna na chahwe ohnu dil di ki dassan</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-10">sunan aaleyan ne utton bahniyan umeedan lakhan</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-10">oo aasavan nu na kattan, shishe agge kharha hassan</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-11">tan hi dukh’ch, vicharda mai kalla</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-11">dukh peerh jehri palle ban dler mathi chakkan</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-12">jo na dil’ch vasaaye ohde naal hyumai rakhan</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-12">ohde chit’ch bewaaste de vehem pakke chaddan</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-13">methon lukkda ni, tuhaadi nazran da jhol</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-13">modhe hath rakh, ghat mera launde jehre mol</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-14">bahuti jangan andruuni, tanhi kar jaanda ghaul</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-14">nhi tan bund ni mai maaran je vigharda mahaul</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-15">himmatan di kami ni ba soch lainda zyaada</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-15">khud de zameer nu kharoch lainda zyaada</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-16">mat kalaakari khud nu tatol lainda zyaada</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-16">Kaushal mehfila ton khud nu lako lainda zyaada</p>
+            </div>
+            
+            <h3 class="verse-title">Hook</h3>
+            <div id="lyrics-hook-2" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="h2-group-1">dissda zeher menu, disse na mai menu (you can’t see me)</p>
+                <p class="lyrics-line" data-annotation-id="h2-group-1">akh de kone’chon ve disse eh kehra shaks? (you can’t see me)</p>
+                <p class="lyrics-line" data-annotation-id="h2-group-1">dissda nhera menu, disse na chehra menu (you can’t see me)</p>
+                <p class="lyrics-line" data-annotation-id="h2-group-1">akh de kone’cho ve jdon dikh jaawe aks (you can’t see me)</p>
+            </div>
+        </section>
+    </div>
+
+    <aside id="annotation-panel" class="flex flex-col">
+        <header class="p-4 border-b flex items-center justify-between" style="border-color: var(--border-color);">
+            <div id="panel-header-content" class="flex-grow mr-4">
+            </div>
+            <button id="close-annotation" class="close-button flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </header>
+        <div id="annotation-content-area" class="annotation-content">
+        </div>
+    </aside>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+             const annotations = {
+                "v1-group-1": "These lines convey others' critical remarks to Anshul about his physical stature. This perceived inadequacy is contrasted with the formidable legacy of Maula Jatt, a figure of immense strength from the same soil. They question Anshul's belonging, asking, 'How are you a gift of that same soil?' This external judgment fosters his inner isolation and feeling of being invisible.",
+                "v1-group-2": "Anshul faces judgments about his appearance, with remarks on his dark complexion and 'face like an African.' These comments imply he lacks presence and is easily overlooked unless explicitly connected by kinship. Such evaluations fuel Anshul's inner isolation and contribute to his feeling of being an 'invisible man.'",
+                "v1-group-3": "This highlights a societal observation where words are valued more than actions, with Anshul's deeds being regarded as worthless. This is illustrated by a metaphor comparing him to local liquor wasted in a foreign bar, underscoring his perceived misplacement and devaluation within his environment.",
+                "v1-group-4": "The remarks convey that Anshul consoles people in need, but this selflessness is met with indifference, as the world does not refine him in return. The word 'kole' (coal) powerfully connects this lack of refinement to the colorism Anshul has faced, reinforcing how he is left unpolished despite his compassion.",
+                "v1-group-5": "Due to ongoing disregard, Anshul 'wanders alone in sorrow.' Even when surrounded by many, he is so profoundly isolated that he talks to himself in front of a mirror, vividly portraying his deep inner isolation and feeling of being unseen by others.",
+                "v1-group-6": "Anshul's statements are consistently cut short, and his contributions are dismissed as worthless, while others' words are deemed important. This highlights a pervasive pattern of his voice being silenced and devalued in conversations, reinforcing his sense of being disregarded.",
+                "v1-group-7": "The remarks highlight that Anshul's efforts are invisible, yet, paradoxically, his silence 'pierces ears,' implying that even his passive presence draws critical attention. This is compounded by the observation that his favors are always deemed to be of lesser value.",
+                "v1-group-8": "The remarks pose a rhetorical question: 'Why should even a single instance of rudeness be tolerated, if it is easy to say your heart is more dirty?' This indicates that Anshul is held to an impossibly high standard where any perceived misstep is deemed unacceptable due to underlying prejudice.",
+                "h1-group-1": "The hook conveys Anshul's crisis of self-recognition. The 'poison' and 'darkness' he sees are manifestations of negativity that obscure his own identity. The plea, (can you see me?), is both an external cry for acknowledgment and an internal reflection of being unable to affirm his own self, reinforcing his status as the 'invisible man.'",
+                "v2-group-1": "Anshul bears metaphorical 'wounds on his body' inflicted by the 'sharp tongues' and critical remarks from Verse 1, stemming from being undermined and receiving unsolicited, negative advice.",
+                "v2-group-2": "He has 'millions of aspirations suppressed by hesitation/shame,' a direct result of the external judgments. He feels his dreams are distant and perhaps unachievable, as if he is 'measuring them in feet,' highlighting how negativity has stifled his ambitions.",
+                "v2-group-3": "Anshul laments that his 'gifts or contributions are lost or forgotten' by a specific individual, adding a personal slight to his metaphorical wounds. He then profoundly asks, 'where should I go shedding this black skin?', conveying his desperation to escape the deep-seated prejudice associated with his complexion.",
+                "v2-group-4": "The constant 'commentary (criticism) on his black skin' has caused 'such a slackness in his shoulders,' signifying a heavy, debilitating burden. Because of this profound impact, he avoids gatherings and questions why he should have to hide this truth.",
+                "v2-group-5": "Anshul defiantly declares 'my color is my pride,' noting the irony that Ram, a revered deity, is found in 'feet of the same color,' a powerful reclamation of his identity against the prejudice he faces.",
+                "v2-group-6": "He reveals his distress that his color becomes a 'tool' to easily demean him by those who 'say mean things under the guise of a joke,' showing how humor is used to mask prejudice.",
+                "v2-group-7": "He has spent 'years wondering if this is a joke or if they are telling him his worth,' indicating the psychological toll of ambiguous, racially charged remarks that blur the line between mockery and genuine devaluation.",
+                "v2-group-8": "He implores those who make such remarks to 'invent the fine line that differentiates a harmless joke from an undermining mockery,' expressing his deep pain and exhaustion from enduring casual colorism.",
+                "v2-group-9": "Anshul reflects on his profound isolation, lamenting that 'in pain, he wanders alone.' He questions the point of expressing his feelings to an unresponsive audience, asking, 'to those who don't want to listen, what can I tell them from my heart?'",
+                "v2-group-10": "He acknowledges that those who do listen have placed 'millions of expectations' upon him. He resolves not to disappoint them, instead maintaining a facade of strength—'laughing in front of the mirror'—even as he privately suffers, highlighting the immense pressure to perform.",
+                "v2-group-11": "Anshul explicitly reiterates his profound isolation, stating, 'that's why in pain, I wander alone.' He reveals his resolve to 'bravely accept' the pain he carries, a courageous choice to bear his suffering privately, emphasizing the theme of emotional imprisonment.",
+                "v2-group-12": "Anshul describes his emotional stance: for 'those who don't hold him in their heart, he maintains an ego against them.' This indicates a deliberate emotional barrier erected as a self-protective mechanism. He actively ensures others perceive him as detached, ensuring that in their minds, he 'firmly instills the suspicion of indifference' to shield himself from further rejection or devaluation.",
+                "v2-group-13": "Anshul asserts that he can see through the 'deception in their gazes,' recognizing superficial support from those who 'place a hand on his shoulder but devalue him.'",
+                "v2-group-14": "He reveals that his hesitation to confront those who devalue him stems from his many 'internal wars.' He clarifies that it's not a lack of courage but these inner battles that cause him to 'dilly-dally' and avoid worsening the atmosphere.",
+                "v2-group-15": "Anshul clarifies that his hesitation stems 'not from a lack of courage,' but from overthinking, which causes him to 'scratch at his own conscience too much,' leading to intense self-reproach and internal struggle.",
+                "v2-group-16": "He explains that his artistic mind causes him to 'introspect too much.' This deep self-examination leads him to 'hide himself in gatherings too often,' encapsulating the theme of social withdrawal and his identity as an 'invisible man.'",
+                "h2-group-1": "This second hook confirms Anshul's crisis of identity, where he sees 'poison' and 'darkness' but not himself. Crucially, the parenthetical phrase shifts from a desperate query (can you see me?) to the definitive statement (you can’t see me). This change signifies a profound resignation and acceptance of his solitary fate, cementing his retreat into inner isolation and his role as the 'invisible man.'"
+            };
+            
+            const aboutSongButton = document.getElementById('about-song-button');
+            const lyricsLines = document.querySelectorAll('.lyrics-line');
+            const annotationPanel = document.getElementById('annotation-panel');
+            const panelHeaderContent = document.getElementById('panel-header-content');
+            const annotationContentArea = document.getElementById('annotation-content-area');
+            const closeButton = document.getElementById('close-annotation');
+            let activeAnnotationId = null;
+            let currentPanelState = null;
+
+            const aboutSongText = `
+                <p class="mb-4">Listen to the silence that follows an insult disguised as a joke. "invisible man" commands you to inhabit that space. This track is a masterclass in internalizing the world's casual cruelty, where every devaluing gaze and failed compliment forces Anshul deeper into himself. He isn't fighting back—not yet. He’s overthinking, scratching at his own conscience, and documenting the war before it begins. What you are about to hear is the anatomy of isolation, built one cutting remark at a time.</p>
+            `;
+
+            function showAboutContent() {
+                panelHeaderContent.innerHTML = `<h2 id="panel-header-title">About 'invisible man'</h2>`;
+                annotationContentArea.innerHTML = `<div class="p-6">${aboutSongText}</div>`;
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                    activeAnnotationId = null;
+                }
+                currentPanelState = 'about';
+                annotationPanel.classList.add('visible');
+            }
+
+            function showAnnotationContent(lineElement) {
+                const annotationId = lineElement.getAttribute('data-annotation-id');
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                }
+                document.querySelectorAll(`[data-annotation-id='${annotationId}']`).forEach(el => el.classList.add('active'));
+                activeAnnotationId = annotationId;
+
+                const annotationText = annotations[annotationId] || "No annotation for this line.";
+                const groupElements = lineElement.parentElement.querySelectorAll(`[data-annotation-id='${annotationId}']`);
+                const sourceText = Array.from(groupElements).map(el => el.innerHTML).join('<br>');
+
+                panelHeaderContent.innerHTML = `<p class="source-lyric p-3 rounded-lg text-sm">${sourceText}</p>`;
+                annotationContentArea.innerHTML = `<div class="p-6">${annotationText}</div>`;
+                currentPanelState = 'annotation';
+                annotationPanel.classList.add('visible');
+            }
+
+            function closeAnnotationPanel() {
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                    activeAnnotationId = null;
+                }
+                annotationPanel.classList.remove('visible');
+                currentPanelState = null;
+            }
+
+            aboutSongButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (annotationPanel.classList.contains('visible') && currentPanelState === 'about') {
+                    closeAnnotationPanel();
+                } else {
+                    showAboutContent();
+                }
+            });
+
+            lyricsLines.forEach(line => {
+                line.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const clickedAnnotationId = line.getAttribute('data-annotation-id');
+                    if (clickedAnnotationId === activeAnnotationId) {
+                        closeAnnotationPanel();
+                    } else {
+                        showAnnotationContent(line);
+                    }
+                });
+            });
+
+            closeButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeAnnotationPanel();
+            });
+
+            document.body.addEventListener('click', (e) => {
+                if (annotationPanel.classList.contains('visible') && !annotationPanel.contains(e.target) && !aboutSongButton.contains(e.target)) {
+                    closeAnnotationPanel();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

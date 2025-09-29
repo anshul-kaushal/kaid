@@ -1,0 +1,762 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aakaarheen - Annotated Lyrics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-dark: #000000;
+            --surface-color: #201A28; 
+            --text-primary: #e2e2e2;
+            --text-secondary: #888888;
+            --border-color: #3a2a4a; 
+            --album-identity-color: #9333ea; 
+            --hover-accent-color: rgba(147, 51, 234, 0.15); 
+            --icon-color-light-purple: #b298dc; 
+        }
+        body {
+            font-family: 'Lora', serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+        }
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--background-dark); }
+        ::-webkit-scrollbar-thumb { background-color: #581c87; border-radius: 8px; border: 2px solid var(--background-dark); }
+        .main-container { max-width: 768px; }
+        .lyrics-header h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--album-identity-color);
+        }
+        .lyrics-line {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .lyrics-line:hover {
+            background-color: var(--hover-accent-color);
+            color: var(--text-primary);
+        }
+        .lyrics-line.active {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            font-weight: 600;
+        }
+        .verse-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+        }
+        #annotation-panel {
+            background-color: var(--surface-color);
+            border-left: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 550px;
+            height: 100vh;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+            z-index: 50;
+            font-family: 'Inter', sans-serif;
+        }
+        #annotation-panel.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        .annotation-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+        .source-lyric {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            font-weight: 600;
+        }
+        
+        .close-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: transparent;
+            color: var(--icon-color-light-purple);
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .close-button:hover {
+            background-color: var(--album-identity-color);
+            color: #fff;
+        }
+        .close-button svg {
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: rgba(32, 26, 40, 0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: var(--icon-color-light-purple);
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+        }
+        /* CHANGE: Corrected the variable for the hover effect */
+        .back-button:hover {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            transform: scale(1.05);
+        }
+        .back-button svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .lyrics-line { font-size: 1rem; line-height: 1.7; }
+            #annotation-panel {
+                top: auto;
+                bottom: 0;
+                width: 100%;
+                max-width: 100%;
+                height: 60vh;
+                transform: translateY(100%);
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+                border-top-left-radius: 20px;
+                border-top-right-radius: 20px;
+            }
+            #annotation-panel.visible { transform: translateY(0); }
+            .back-button { top: 1rem; left: 1rem; width: 2.5rem; height: 2.5rem; }
+            .back-button svg { width: 1.25rem; height: 1.25rem; }
+        }
+    </style>
+</head>
+<body class="">
+    <a href="index.html" class="back-button" aria-label="Back to main page">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+    </a>
+        
+    <div class="main-container px-6 py-12 md:px-12 md:py-24">
+        <header class="lyrics-header mb-12">
+            <h1 class="text-5xl md:text-6xl font-bold mb-2">aakaarheen</h1>
+            <h2 class="text-xl text-gray-400">Annotated Lyrics</h2>
+        </header>
+
+        <section id="lyrics-content">
+            <h3 class="verse-title">Verse 1</h3>
+            <div id="lyrics-v1" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="v1-group-1">mere supne aakaarheen</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-1">te talaashan din raat jo khawaab neend taalke ki ohi banu khushi mere bhaag di</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">menu tan ehna pata, filhaal araam nhi</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">University de SOPs jappan menu SOBs</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">behke likhna aasaan nhi</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">par beat vaje mac te</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">te feel howe chehkdi</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">sihaayi meri dulle, kalam 100 round magazine</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-3">Waterloo aaleyan nu SOP thaan bhejan geet mere?</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-3">saleyan de palle paini kite desi?</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-4">laige backseat dekho geet mere</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-4">duniyadaari da bhes saala messy</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-5">kehre khullne diwaar gal laake eh kala</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-5">yan banan practical kihdi manna main salah</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-6">taale har salah dil da matha mera</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-6">aahi sochde langh jaawe din adha mera</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-7">ki karan mai?</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-7">kal mera ki ehi soch daran mai</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-8">tasveer eh kitaab tuhade saareyan layi jih’ch rang de bajaaye eh sihaayi bharan mai</p>
+            </div>
+            
+            <h3 class="verse-title">Pre-Hook</h3>
+            <div id="lyrics-pre-hook-1" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="pre-hook-group-1">jiven zindagi koi jheel da nazaara</p>
+                <p class="lyrics-line" data-annotation-id="pre-hook-group-1">te vichkaar phaseya mai dur hai kinaara</p>
+                <p class="lyrics-line" data-annotation-id="pre-hook-group-1">hath pair maaran, ve mai labhda sahaara</p>
+                <p class="lyrics-line" data-annotation-id="pre-hook-group-2">bina sihayi bhare kiddan kalam chalaawan</p>
+            </div>
+            
+            <h3 class="verse-title">Hook</h3>
+            <div id="lyrics-hook-1" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="hook-group-1">mere supne aakaarheen</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">mere supne aakaarheen</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">do kishtiyan te swaar</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">te aaun de ve baahar menu milde aasaar nhi</p>
+            </div>
+
+            <h3 class="verse-title">Verse 2</h3>
+            <div id="lyrics-v2" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="v2-group-1">kehende anjaam da moh</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-1">howe te supne insaan de sakaar na hon</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-2">kyunki oo raah aa jo manzil nu pawe</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-2">har zid bekaar je aanand na oh’ch</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-3">raah mera rap par mukaam tan hor</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-3">Data Science, gharon baahar abroad</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-4">par copyiyaan te likhaan har raat main roz jaadugari apaar, alfaaz Gehlot</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-5">UBC aaleya nu SOP thaan bhejan geet mere?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-5">saleyan de palle paini kithe desi?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-6">haige bheti dekho geet mere</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-6">4:44 svere likhan jiven Jay-Z</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-7">likhe bhawikh mere Cheen vich Mao</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-7">zindagi da ki blueprint, eh reasonable doubt</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-8">vekhe jo khawaab bas neend vich hi payun?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-8">kuch karke record yan zameen mai hilayun?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-9">mera zameer main jagaayu?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-9">yan ohdi peerh nu mai kisi leerh’ch chupaayun?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-10">ah fokiyaan gallan de bas teer hi chalaayun?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-10">bina kite release kinne geet mai banayun?</p>
+            </div>
+            
+            <h3 class="verse-title">Pre-Hook</h3>
+            <div id="lyrics-pre-hook-2" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="pre-hook-group-1">jiven zindagi koi jheel da nazaara</p>
+                <p class="lyrics-line" data-annotation-id="pre-hook-group-1">te vichkaar phaseya mai dur hai kinaara</p>
+                <p class="lyrics-line" data-annotation-id="pre-hook-group-1">hath pair maaran, ve mai labhda sahaara</p>
+                <p class="lyrics-line" data-annotation-id="pre-hook-group-2">bina sihayi bhare kiddan kalam chalaawan</p>
+            </div>
+
+            <h3 class="verse-title">Hook</h3>
+            <div id="lyrics-hook-2" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="hook-group-1">mere supne aakaarheen</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">mere supne aakaarheen</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">do kishtiyan te swaar</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">te aaun de ve baahar menu milde aasaar nhi</p>
+            </div>
+        </section>
+    </div>
+
+    <aside id="annotation-panel" class="flex flex-col">
+        <header class="p-4 border-b flex items-center justify-between" style="border-color: var(--border-color);">
+            <p class="source-lyric p-3 rounded-lg text-sm flex-grow mr-4">Source Lyric</p>
+            <button id="close-annotation" class="close-button flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </header>
+        <div id="annotation-content-area" class="annotation-content p-6 overflow-y-auto flex-grow">
+        </div>
+    </aside>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+             const annotations = { "v1-group-1": "These lines establish the central theme of the song, where Anshul expresses that his dreams are 'shapeless' or 'unformed'. He constantly searches, even forsaking sleep, to understand if these vague aspirations will ultimately bring him happiness and fulfill his destiny, highlighting his lack of direction and uncertainty. This sentiment aligns with the album's overarching themes of feeling lost and trapped, as seen in 'Ganga' where he is caught in a cycle of grief and obsession.", "v1-group-2": "Anshul expresses his profound lack of peace and a direct struggle with academic writing, finding university 'SOPs' (Statement of Purposes) to be incredibly frustrating ('SOBs'). He states that 'it's not easy to sit and write' generally, implying the difficulty of these conventional tasks. However, this difficulty immediately contrasts with his artistic flow: once a 'beat plays on his Mac,' his pen transforms into a '100-round magazine,' causing ink to 'gush' or 'chirp' with ideas. This vivid imagery highlights the effortless and abundant nature of his rap writing compared to the academic struggle, positioning his art as his true and powerful outlet and primary coping mechanism for his 'shapeless dreams' and feelings of being 'lost, stuck, and uncertain'.", "v1-group-3": "Anshul directly questions whether he should submit his songs instead of academic 'SOPs' (Statement of Purposes) to universities like Waterloo. This highlights his deep conflict between pursuing a conventional academic path and his artistic passion, a central struggle in 'aakaarheen'. He then expresses doubt about whether these 'desi' (local/cultural) songs would even be understood or appreciated by such institutions, underscoring his uncertainty about finding acceptance for his true self and his art in a mainstream, academic context, further aligning with the album's theme of feeling 'lost, stuck, and uncertain'.", "v1-group-4": "Anshul observes his songs being pushed to the 'backseat,' indicating the devaluation of his artistic passion compared to academic pursuits. He finds the 'guise of worldly affairs' or societal expectations to be 'messy,' expressing his frustration with the chaotic external pressures that pull him away from his true calling, aligning with the album's themes of feeling 'lost, stuck, and uncertain'.", "v1-group-5": "Anshul grapples with a central dilemma: should he embrace his art ('kala'), hoping it will 'open doors' for him, or should he become 'practical' and follow conventional advice? This highlights his profound uncertainty and internal conflict regarding his life path, further emphasizing his feeling of being 'lost, stuck, and uncertain' and caught between his artistic passion and societal expectations, a core theme of 'aakaarheen' and the 'KAID' album.", "v1-group-6": "Anshul describes his internal conflict and indecision, noting that his mind 'pushes away every piece of advice.' He reveals that 'half his day passes' simply thinking about these dilemmas. This highlights his profound state of being 'lost, stuck, and uncertain', a core theme of 'aakaarheen' and the 'KAID' album, as he grapples with finding direction.", "v1-group-7": "Anshul vocalizes his profound uncertainty and fear about his future, asking 'What should I do?' and 'What is my tomorrow?'. He admits that merely 'thinking this scares him.' This starkly highlights his lack of direction and persistent anxiety, reinforcing the central themes of 'shapeless dreams' and feeling 'lost, stuck, and uncertain' in 'aakaarheen' and throughout the 'KAID' album.", "v1-group-8": "Anshul dedicates his creative work—his 'book' filled with 'ink' instead of colors—to his audience, symbolizing his chosen medium of honest, raw expression. He then introduces a profound metaphor, comparing life to a 'scene of a lake,' which sets the stage for a deeper reflection on his personal journey and challenges. This highlights the public and introspective nature of his art.", "pre-hook-group-1": "Continuing the metaphor of life as a 'lake,' Anshul states he is 'stuck in the middle, with the shore far away,' and he is 'flailing, looking for support.' This vividly portrays his struggle, confusion, and desperate search for direction or help amidst his unformed, 'shapeless dreams' (aakaarheen).", "pre-hook-group-2": "Anshul poses a rhetorical question, 'how can I wield my pen without filling it with ink?'. This serves as a metaphor for his dilemma: 'Since my dreams are shapeless (aakaarheen), how will I fulfill them?' The 'pen' represents his means of creation and striving, while 'ink' symbolizes the necessary substance, clear vision, or defined path required to bring his unformed aspirations to reality. This highlights his difficulty in concretizing his goals without a clear direction or inspiration.", "hook-group-1": "Anshul repeatedly declares, 'my dreams are shapeless' (mere supne aakaarheen), explicitly stating the central theme of unformed and undefined aspirations for the song and album. He then reveals he is 'riding two boats' (do kishtiyan te swaar), a powerful metaphor for his profound indecision and feeling torn between conflicting paths (such as his artistic passion and the societal pressure for academic practicality). This is further compounded by his lament that 'to come out (of this situation), I find no signs' (te aaun de ve baahar menu milde aasaar nhi), underscoring his lack of clear direction, hope, or discernible way forward. The entire hook vividly encapsulates Anshul's state of being lost, stuck, and uncertain, unable to concretize his future or commit to a definitive course.", "v2-group-1": "Anshul delves into a philosophical idea: it is said that if there is 'attachment to the outcome' ('anjaam da moh'), then a person's 'dreams will not be fulfilled' ('supne insaan de sakaar na hon'). This line introduces a potential obstacle to realizing aspirations, suggesting that an overemphasis on the end result might hinder the journey itself. It sets a contemplative tone for this verse, exploring the complexities of pursuing one's goals.", "v2-group-2": "Continuing from the idea that attachment to the outcome can hinder dreams, Anshul states that this happens 'because that is the path that leads to the destination.' This suggests that if the journey is viewed solely as a means to an end, the process itself loses value. He then asserts that 'every stubbornness or insistence is useless if there is no joy in it.' These lines highlight the importance of finding fulfillment in the process, not just the end goal, implying that a relentless pursuit without intrinsic pleasure is ultimately futile. This connects to Anshul's internal conflict between practical pursuits and his artistic passion, questioning the value of a path chosen without joy.", "v2-group-3": "Anshul explicitly states his 'path is rap, but his destination is something else.' He then clarifies this 'other destination' as 'Data Science, outside of home, abroad'. This directly articulates his central internal conflict between his artistic passion (rap) and the conventional, academic path he feels pressured to pursue, which he has previously questioned (e.g., sending songs instead of SOPs to Waterloo). These lines concretely define the two 'boats' he is riding, symbolizing his struggle between creative fulfillment and societal expectations for a practical career.", "v2-group-4": "Despite identifying a conventional career path, Anshul 'writes on notebooks every night', perceiving 'immense magic' in his 'words.' He metaphorically links this to 'Gehlot,' a direct reference to Indian politician Ashok Gehlot, whose father, Laxman Singh Gehlot, was a renowned magician. This suggests Anshul believes his own words possess a similar magical, transformative power. This highlights his unwavering commitment to rap as a profound artistic outlet and coping mechanism, a theme central to the album.", "v2-group-5": "Anshul reiterates a core dilemma from Verse 1, questioning whether he should 'send his songs instead of SOPs (Statements of Purpose) to UBC (University of British Columbia) students/authorities.' He immediately follows this with the rhetorical question, 'how would these 'idiots' (saleyan) understand 'desi'?' This highlights his persistent internal conflict between pursuing a conventional academic path (Data Science) and his artistic passion (rap). He doubts if his culturally specific, personal, and artistic expressions would be understood or valued by Western academic institutions, reflecting his fear that his authentic self will be dismissed in a traditional professional setting.", "v2-group-6": "Anshul asserts the intrinsic quality of his work, stating, 'look, my songs are confidants/share my secrets' ('haige bheti dekho geet mere'). This implies his songs are repositories of his deepest, most private thoughts and emotions, serving as an intimate outlet. He then emphasizes his dedication and artistic ambition by proclaiming, 'I write at 4:44 AM like Jay-Z,' alluding to Jay-Z's album '4:44' and signifying a commitment to crafting deep, introspective, and personal art during the early hours. This reinforces songwriting as his profound outlet and coping mechanism, where he writes nightly to express his true self.", "v2-group-7": "Anshul suggests his future is 'written in China by Mao,' implying his destiny is predetermined by external, overwhelming, and potentially disastrous forces, referencing Mao Zedong's calamitous Great Leap Forward. This reflects his lack of agency over his 'shapeless dreams.' He then questions, 'what is life's blueprint? It's reasonable doubt,' directly expressing skepticism about a clear life plan. This line is also a clever double-entendre, referencing Jay-Z's albums 'Blueprint' and 'Reasonable Doubt,' extending earlier allusions to the artist. This integrates his existential doubt with his artistic ambition, even as he feels 'lost, stuck, and uncertain'.", "v2-group-8": "Anshul questions if his 'dreams will only be fulfilled in sleep,' linking to his 'shapeless dreams' (aakaarheen) and the uncertainty of their real-world manifestation. He contrasts this by asking if he will 'shake the earth by recording something in reality,' expressing the desire for significant impact through his rap and songwriting. This highlights his internal conflict to transform artistic passion into a meaningful, tangible path.", "v2-group-9": "Anshul asks, 'will I awaken my conscience?' implying a struggle with moral choices or difficult truths. He contrasts this by asking if he will 'hide its pain in some rag,' referring to the emotional turmoil from his 'shapeless dreams' (aakaarheen) and existential uncertainty. This highlights his internal conflict between confronting profound pain and suppressing it, a recurring theme where he've attempted to hide thoughts only for them to resurface. It underscores his feeling of being 'lost, stuck, and uncertain'.", "v2-group-10": "Anshul continues his self-questioning, asking, 'will I just shoot arrows of empty talk?' This contrasts with meaningful action, implying a fear of merely complaining without making tangible progress. He then immediately asks, 'how many songs will I make without releasing them?' This highlights his struggle with unreleased art and the challenge of translating his creative output into public recognition or impact. It reflects his overarching theme of 'shapeless dreams' (aakaarheen) and feeling 'lost, stuck, and uncertain' about how to concretely advance his artistic path, despite songwriting being his primary coping mechanism." };
+
+            const lyricsLines = document.querySelectorAll('.lyrics-line');
+            const annotationPanel = document.getElementById('annotation-panel');
+            const annotationContentArea = document.getElementById('annotation-content-area');
+            const sourceLyricElement = annotationPanel.querySelector('.source-lyric');
+            const closeButton = document.getElementById('close-annotation');
+            
+            let activeAnnotationId = null;
+
+            function openAnnotationPanel(lineElement) {
+                const annotationId = lineElement.getAttribute('data-annotation-id');
+                
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                }
+                
+                document.querySelectorAll(`[data-annotation-id='${annotationId}']`).forEach(el => el.classList.add('active'));
+                
+                activeAnnotationId = annotationId;
+
+                const annotationText = annotations[annotationId] || "No annotation for this line.";
+                
+                const groupElements = lineElement.parentElement.querySelectorAll(`[data-annotation-id='${annotationId}']`);
+                const sourceText = Array.from(groupElements).map(el => el.innerHTML).join('<br>');
+                
+                sourceLyricElement.innerHTML = sourceText;
+                annotationContentArea.innerHTML = annotationText;
+
+                annotationPanel.classList.add('visible');
+            }
+
+            function closeAnnotationPanel() {
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                    activeAnnotationId = null;
+                }
+                annotationPanel.classList.remove('visible');
+            }
+
+            lyricsLines.forEach(line => {
+                line.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const clickedAnnotationId = line.getAttribute('data-annotation-id');
+                    
+                    if (clickedAnnotationId === activeAnnotationId) {
+                        closeAnnotationPanel();
+                    } else {
+                        openAnnotationPanel(line);
+                    }
+                });
+            });
+
+            closeButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeAnnotationPanel();
+            });
+
+            document.body.addEventListener('click', (e) => {
+                if (annotationPanel.classList.contains('visible') && !annotationPanel.contains(e.target)) {
+                    closeAnnotationPanel();
+                }
+            });
+        });
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aakaarheen - Annotated Lyrics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-dark: #000000;
+            --surface-color: #201A28; 
+            --text-primary: #e2e2e2;
+            --text-secondary: #888888;
+            --border-color: #3a2a4a; 
+            --album-identity-color: #9333ea; 
+            --hover-accent-color: rgba(147, 51, 234, 0.15); 
+            --icon-color-light-purple: #b298dc; 
+        }
+        body {
+            font-family: 'Lora', serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+        }
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--background-dark); }
+        ::-webkit-scrollbar-thumb { background-color: #581c87; border-radius: 8px; border: 2px solid var(--background-dark); }
+        .main-container { max-width: 768px; }
+        .lyrics-header h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--album-identity-color);
+        }
+        .lyrics-line {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .lyrics-line:hover {
+            background-color: var(--hover-accent-color);
+            color: var(--text-primary);
+        }
+        .lyrics-line.active {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            font-weight: 600;
+        }
+        .verse-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+        }
+        #annotation-panel {
+            background-color: var(--surface-color);
+            border-left: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 550px;
+            height: 100vh;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+            z-index: 50;
+            font-family: 'Inter', sans-serif;
+        }
+        #annotation-panel.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        /* #panel-header-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--primary-accent-color);
+        } */
+        .annotation-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+        .source-lyric {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            font-weight: 600;
+        }
+        
+        .close-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: transparent;
+            color: var(--icon-color-light-purple);
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .close-button:hover {
+            background-color: var(--album-identity-color);
+            color: #fff;
+        }
+        .close-button svg {
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: rgba(32, 26, 40, 0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: var(--icon-color-light-purple);
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+        }
+        .back-button:hover {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            transform: scale(1.05);
+        }
+        .back-button svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        /* .about-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background-color: transparent;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+        }
+        .about-button:hover {
+            background-color: var(--hover-accent-color);
+            color: var(--text-primary);
+            transform: scale(1.1);
+        } */
+        .about-button-expand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 2.5rem;
+    padding: 0 0.75rem;
+    border-radius: 999px;
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    overflow: hidden; /* Hide text initially */
+}
+
+.about-button-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    width: 0;
+    transition: width 0.4s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.2s ease;
+}
+
+.about-button-expand:hover {
+    background-color: var(--surface-color);
+    color: var(--text-primary);
+    border-color: var(--primary-accent-color);
+}
+
+.about-button-expand:hover .about-button-text {
+    width: 50px; /* The width the text will expand to */
+    opacity: 1;
+}
+        @media (max-width: 768px) {
+            .lyrics-line { font-size: 1rem; line-height: 1.7; }
+            #annotation-panel {
+                top: auto;
+                bottom: 0;
+                width: 100%;
+                max-width: 100%;
+                height: 60vh;
+                transform: translateY(100%);
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+                border-top-left-radius: 20px;
+                border-top-right-radius: 20px;
+            }
+            #annotation-panel.visible { transform: translateY(0); }
+            .back-button { top: 1rem; left: 1rem; width: 2.5rem; height: 2.5rem; }
+            .back-button svg { width: 1.25rem; height: 1.25rem; }
+        }
+    </style>
+</head>
+<body class="">
+    <a href="index.html" class="back-button" aria-label="Back to main page">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+    </a>
+        
+    <div class="main-container px-6 py-12 md:px-12 md:py-24">
+        <header class="lyrics-header mb-12">
+            <div class="flex items-center gap-4">
+                <h1 class="text-5xl md:text-6xl font-bold mb-0">aakaarheen</h1>
+                <button id="about-song-button" class="about-button-expand" aria-label="About this song">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="about-button-text">About</span>
+                </button>
+            </div>
+            <h2 class="text-xl text-gray-400 mt-2">Annotated Lyrics</h2>
+        </header>
+
+        <section id="lyrics-content">
+            <h3 class="verse-title">Verse 1</h3>
+            <div id="lyrics-v1" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="v1-group-1">mere supne aakaarheen</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-1">te talaashan din raat jo khawaab neend taalke ki ohi banu khushi mere bhaag di</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">menu tan ehna pata, filhaal araam nhi</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">University de SOPs jappan menu SOBs</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">behke likhna aasaan nhi</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">par beat vaje mac te</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">te feel howe chehkdi</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-2">sihaayi meri dulle, kalam 100 round magazine</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-3">Waterloo aaleyan nu SOP thaan bhejan geet mere?</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-3">saleyan de palle paini kite desi?</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-4">laige backseat dekho geet mere</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-4">duniyadaari da bhes saala messy</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-5">kehre khullne diwaar gal laake eh kala</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-5">yan banan practical kihdi manna main salah</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-6">taale har salah dil da matha mera</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-6">aahi sochde langh jaawe din adha mera</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-7">ki karan mai?</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-7">kal mera ki ehi soch daran mai</p>
+                <p class="lyrics-line" data-annotation-id="v1-group-8">tasveer eh kitaab tuhade saareyan layi jih’ch rang de bajaaye eh sihaayi bharan mai</p>
+            </div>
+            
+            <h3 class="verse-title">Pre-Hook</h3>
+            <div id="lyrics-pre-hook-1" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="pre-hook-group-1">jiven zindagi koi jheel da nazaara</p>
+                <p class="lyrics-line" data-annotation-id="pre-hook-group-1">te vichkaar phaseya mai dur hai kinaara</p>
+                <p class="lyrics-line" data-annotation-id="pre-hook-group-1">hath pair maaran, ve mai labhda sahaara</p>
+                <p class="lyrics-line" data-annotation-id="pre-hook-group-2">bina sihayi bhare kiddan kalam chalaawan</p>
+            </div>
+            
+            <h3 class="verse-title">Hook</h3>
+            <div id="lyrics-hook-1" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="hook-group-1">mere supne aakaarheen</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">mere supne aakaarheen</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">do kishtiyan te swaar</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">te aaun de ve baahar menu milde aasaar nhi</p>
+            </div>
+
+            <h3 class="verse-title">Verse 2</h3>
+            <div id="lyrics-v2" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="v2-group-1">kehende anjaam da moh</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-1">howe te supne insaan de sakaar na hon</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-2">kyunki oo raah aa jo manzil nu pawe</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-2">har zid bekaar je aanand na oh’ch</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-3">raah mera rap par mukaam tan hor</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-3">Data Science, gharon baahar abroad</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-4">par copyiyaan te likhaan har raat main roz jaadugari apaar, alfaaz Gehlot</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-5">UBC aaleya nu SOP thaan bhejan geet mere?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-5">saleyan de palle paini kithe desi?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-6">haige bheti dekho geet mere</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-6">4:44 svere likhan jiven Jay-Z</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-7">likhe bhawikh mere Cheen vich Mao</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-7">zindagi da ki blueprint, eh reasonable doubt</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-8">vekhe jo khawaab bas neend vich hi payun?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-8">kuch karke record yan zameen mai hilayun?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-9">mera zameer main jagaayu?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-9">yan ohdi peerh nu mai kisi leerh’ch chupaayun?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-10">ah fokiyaan gallan de bas teer hi chalaayun?</p>
+                <p class="lyrics-line" data-annotation-id="v2-group-10">bina kite release kinne geet mai banayun?</p>
+            </div>
+            
+            <h3 class="verse-title">Pre-Hook</h3>
+            <div id="lyrics-pre-hook-2" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="pre-hook-group-1">jiven zindagi koi jheel da nazaara</p>
+                <p class="lyrics-line" data-annotation-id="pre-hook-group-1">te vichkaar phaseya mai dur hai kinaara</p>
+                <p class="lyrics-line" data-annotation-id="pre-hook-group-1">hath pair maaran, ve mai labhda sahaara</p>
+                <p class="lyrics-line" data-annotation-id="pre-hook-group-2">bina sihayi bhare kiddan kalam chalaawan</p>
+            </div>
+
+            <h3 class="verse-title">Hook</h3>
+            <div id="lyrics-hook-2" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="hook-group-1">mere supne aakaarheen</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">mere supne aakaarheen</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">do kishtiyan te swaar</p>
+                <p class="lyrics-line" data-annotation-id="hook-group-1">te aaun de ve baahar menu milde aasaar nhi</p>
+            </div>
+        </section>
+    </div>
+
+    <aside id="annotation-panel" class="flex flex-col">
+        <header class="p-4 border-b flex items-center justify-between" style="border-color: var(--border-color);">
+            <div id="panel-header-content" class="flex-grow mr-4">
+                <!-- Dynamic content will be injected here -->
+            </div>
+            <button id="close-annotation" class="close-button flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </header>
+        <div id="annotation-content-area" class="annotation-content">
+        </div>
+    </aside>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            //  const annotations = { "v1-group-1": "These lines establish the central theme...", /* etc. */ };
+             const annotations = { "v1-group-1": "These lines establish the central theme of the song, where Anshul expresses that his dreams are 'shapeless' or 'unformed'. He constantly searches, even forsaking sleep, to understand if these vague aspirations will ultimately bring him happiness and fulfill his destiny, highlighting his lack of direction and uncertainty. This sentiment aligns with the album's overarching themes of feeling lost and trapped, as seen in 'Ganga' where he is caught in a cycle of grief and obsession.", "v1-group-2": "Anshul expresses his profound lack of peace and a direct struggle with academic writing, finding university 'SOPs' (Statement of Purposes) to be incredibly frustrating ('SOBs'). He states that 'it's not easy to sit and write' generally, implying the difficulty of these conventional tasks. However, this difficulty immediately contrasts with his artistic flow: once a 'beat plays on his Mac,' his pen transforms into a '100-round magazine,' causing ink to 'gush' or 'chirp' with ideas. This vivid imagery highlights the effortless and abundant nature of his rap writing compared to the academic struggle, positioning his art as his true and powerful outlet and primary coping mechanism for his 'shapeless dreams' and feelings of being 'lost, stuck, and uncertain'.", "v1-group-3": "Anshul directly questions whether he should submit his songs instead of academic 'SOPs' (Statement of Purposes) to universities like Waterloo. This highlights his deep conflict between pursuing a conventional academic path and his artistic passion, a central struggle in 'aakaarheen'. He then expresses doubt about whether these 'desi' (local/cultural) songs would even be understood or appreciated by such institutions, underscoring his uncertainty about finding acceptance for his true self and his art in a mainstream, academic context, further aligning with the album's theme of feeling 'lost, stuck, and uncertain'.", "v1-group-4": "Anshul observes his songs being pushed to the 'backseat,' indicating the devaluation of his artistic passion compared to academic pursuits. He finds the 'guise of worldly affairs' or societal expectations to be 'messy,' expressing his frustration with the chaotic external pressures that pull him away from his true calling, aligning with the album's themes of feeling 'lost, stuck, and uncertain'.", "v1-group-5": "Anshul grapples with a central dilemma: should he embrace his art ('kala'), hoping it will 'open doors' for him, or should he become 'practical' and follow conventional advice? This highlights his profound uncertainty and internal conflict regarding his life path, further emphasizing his feeling of being 'lost, stuck, and uncertain' and caught between his artistic passion and societal expectations, a core theme of 'aakaarheen' and the 'KAID' album.", "v1-group-6": "Anshul describes his internal conflict and indecision, noting that his mind 'pushes away every piece of advice.' He reveals that 'half his day passes' simply thinking about these dilemmas. This highlights his profound state of being 'lost, stuck, and uncertain', a core theme of 'aakaarheen' and the 'KAID' album, as he grapples with finding direction.", "v1-group-7": "Anshul vocalizes his profound uncertainty and fear about his future, asking 'What should I do?' and 'What is my tomorrow?'. He admits that merely 'thinking this scares him.' This starkly highlights his lack of direction and persistent anxiety, reinforcing the central themes of 'shapeless dreams' and feeling 'lost, stuck, and uncertain' in 'aakaarheen' and throughout the 'KAID' album.", "v1-group-8": "Anshul dedicates his creative work—his 'book' filled with 'ink' instead of colors—to his audience, symbolizing his chosen medium of honest, raw expression. He then introduces a profound metaphor, comparing life to a 'scene of a lake,' which sets the stage for a deeper reflection on his personal journey and challenges. This highlights the public and introspective nature of his art.", "pre-hook-group-1": "Continuing the metaphor of life as a 'lake,' Anshul states he is 'stuck in the middle, with the shore far away,' and he is 'flailing, looking for support.' This vividly portrays his struggle, confusion, and desperate search for direction or help amidst his unformed, 'shapeless dreams' (aakaarheen).", "pre-hook-group-2": "Anshul poses a rhetorical question, 'how can I wield my pen without filling it with ink?'. This serves as a metaphor for his dilemma: 'Since my dreams are shapeless (aakaarheen), how will I fulfill them?' The 'pen' represents his means of creation and striving, while 'ink' symbolizes the necessary substance, clear vision, or defined path required to bring his unformed aspirations to reality. This highlights his difficulty in concretizing his goals without a clear direction or inspiration.", "hook-group-1": "Anshul repeatedly declares, 'my dreams are shapeless' (mere supne aakaarheen), explicitly stating the central theme of unformed and undefined aspirations for the song and album. He then reveals he is 'riding two boats' (do kishtiyan te swaar), a powerful metaphor for his profound indecision and feeling torn between conflicting paths (such as his artistic passion and the societal pressure for academic practicality). This is further compounded by his lament that 'to come out (of this situation), I find no signs' (te aaun de ve baahar menu milde aasaar nhi), underscoring his lack of clear direction, hope, or discernible way forward. The entire hook vividly encapsulates Anshul's state of being lost, stuck, and uncertain, unable to concretize his future or commit to a definitive course.", "v2-group-1": "Anshul delves into a philosophical idea: it is said that if there is 'attachment to the outcome' ('anjaam da moh'), then a person's 'dreams will not be fulfilled' ('supne insaan de sakaar na hon'). This line introduces a potential obstacle to realizing aspirations, suggesting that an overemphasis on the end result might hinder the journey itself. It sets a contemplative tone for this verse, exploring the complexities of pursuing one's goals.", "v2-group-2": "Continuing from the idea that attachment to the outcome can hinder dreams, Anshul states that this happens 'because that is the path that leads to the destination.' This suggests that if the journey is viewed solely as a means to an end, the process itself loses value. He then asserts that 'every stubbornness or insistence is useless if there is no joy in it.' These lines highlight the importance of finding fulfillment in the process, not just the end goal, implying that a relentless pursuit without intrinsic pleasure is ultimately futile. This connects to Anshul's internal conflict between practical pursuits and his artistic passion, questioning the value of a path chosen without joy.", "v2-group-3": "Anshul explicitly states his 'path is rap, but his destination is something else.' He then clarifies this 'other destination' as 'Data Science, outside of home, abroad'. This directly articulates his central internal conflict between his artistic passion (rap) and the conventional, academic path he feels pressured to pursue, which he has previously questioned (e.g., sending songs instead of SOPs to Waterloo). These lines concretely define the two 'boats' he is riding, symbolizing his struggle between creative fulfillment and societal expectations for a practical career.", "v2-group-4": "Despite identifying a conventional career path, Anshul 'writes on notebooks every night', perceiving 'immense magic' in his 'words.' He metaphorically links this to 'Gehlot,' a direct reference to Indian politician Ashok Gehlot, whose father, Laxman Singh Gehlot, was a renowned magician. This suggests Anshul believes his own words possess a similar magical, transformative power. This highlights his unwavering commitment to rap as a profound artistic outlet and coping mechanism, a theme central to the album.", "v2-group-5": "Anshul reiterates a core dilemma from Verse 1, questioning whether he should 'send his songs instead of SOPs (Statements of Purpose) to UBC (University of British Columbia) students/authorities.' He immediately follows this with the rhetorical question, 'how would these 'idiots' (saleyan) understand 'desi'?' This highlights his persistent internal conflict between pursuing a conventional academic path (Data Science) and his artistic passion (rap). He doubts if his culturally specific, personal, and artistic expressions would be understood or valued by Western academic institutions, reflecting his fear that his authentic self will be dismissed in a traditional professional setting.", "v2-group-6": "Anshul asserts the intrinsic quality of his work, stating, 'look, my songs are confidants/share my secrets' ('haige bheti dekho geet mere'). This implies his songs are repositories of his deepest, most private thoughts and emotions, serving as an intimate outlet. He then emphasizes his dedication and artistic ambition by proclaiming, 'I write at 4:44 AM like Jay-Z,' alluding to Jay-Z's album '4:44' and signifying a commitment to crafting deep, introspective, and personal art during the early hours. This reinforces songwriting as his profound outlet and coping mechanism, where he writes nightly to express his true self.", "v2-group-7": "Anshul suggests his future is 'written in China by Mao,' implying his destiny is predetermined by external, overwhelming, and potentially disastrous forces, referencing Mao Zedong's calamitous Great Leap Forward. This reflects his lack of agency over his 'shapeless dreams.' He then questions, 'what is life's blueprint? It's reasonable doubt,' directly expressing skepticism about a clear life plan. This line is also a clever double-entendre, referencing Jay-Z's albums 'Blueprint' and 'Reasonable Doubt,' extending earlier allusions to the artist. This integrates his existential doubt with his artistic ambition, even as he feels 'lost, stuck, and uncertain'.", "v2-group-8": "Anshul questions if his 'dreams will only be fulfilled in sleep,' linking to his 'shapeless dreams' (aakaarheen) and the uncertainty of their real-world manifestation. He contrasts this by asking if he will 'shake the earth by recording something in reality,' expressing the desire for significant impact through his rap and songwriting. This highlights his internal conflict to transform artistic passion into a meaningful, tangible path.", "v2-group-9": "Anshul asks, 'will I awaken my conscience?' implying a struggle with moral choices or difficult truths. He contrasts this by asking if he will 'hide its pain in some rag,' referring to the emotional turmoil from his 'shapeless dreams' (aakaarheen) and existential uncertainty. This highlights his internal conflict between confronting profound pain and suppressing it, a recurring theme where he've attempted to hide thoughts only for them to resurface. It underscores his feeling of being 'lost, stuck, and uncertain'.", "v2-group-10": "Anshul continues his self-questioning, asking, 'will I just shoot arrows of empty talk?' This contrasts with meaningful action, implying a fear of merely complaining without making tangible progress. He then immediately asks, 'how many songs will I make without releasing them?' This highlights his struggle with unreleased art and the challenge of translating his creative output into public recognition or impact. It reflects his overarching theme of 'shapeless dreams' (aakaarheen) and feeling 'lost, stuck, and uncertain' about how to concretely advance his artistic path, despite songwriting being his primary coping mechanism." };
+            const aboutSongButton = document.getElementById('about-song-button');
+            const lyricsLines = document.querySelectorAll('.lyrics-line');
+            const annotationPanel = document.getElementById('annotation-panel');
+            const panelHeaderContent = document.getElementById('panel-header-content');
+            const annotationContentArea = document.getElementById('annotation-content-area');
+            const closeButton = document.getElementById('close-annotation');
+            let activeAnnotationId = null;
+            let currentPanelState = null;
+
+            const aboutSongText = `
+                <p class="mb-4">This is not a song about having a dream. It’s the sound of being crushed by a dream that has no shape. "aakaarheen" is an anthem for the overthinker, the artist drowning in academia, the soul stuck between the person they’re supposed to be and the one they are when the beat drops. Anshul isn't just writing lyrics; he's mapping a crisis of faith, caught between a university application and a 100-round magazine of a pen. This is the official soundtrack to the paralyzing fear of tomorrow.</p>
+            `;
+
+            function showAboutContent() {
+                panelHeaderContent.innerHTML = `<h2 id="panel-header-title">About 'aakaarheen'</h2>`;
+                annotationContentArea.innerHTML = `<div class="p-6">${aboutSongText}</div>`;
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                    activeAnnotationId = null;
+                }
+                currentPanelState = 'about';
+                annotationPanel.classList.add('visible');
+            }
+
+            function showAnnotationContent(lineElement) {
+                const annotationId = lineElement.getAttribute('data-annotation-id');
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                }
+                document.querySelectorAll(`[data-annotation-id='${annotationId}']`).forEach(el => el.classList.add('active'));
+                activeAnnotationId = annotationId;
+
+                const annotationText = annotations[annotationId] || "No annotation for this line.";
+                const groupElements = lineElement.parentElement.querySelectorAll(`[data-annotation-id='${annotationId}']`);
+                const sourceText = Array.from(groupElements).map(el => el.innerHTML).join('<br>');
+
+                panelHeaderContent.innerHTML = `<p class="source-lyric p-3 rounded-lg text-sm">${sourceText}</p>`;
+                annotationContentArea.innerHTML = `<div class="p-6">${annotationText}</div>`;
+                currentPanelState = 'annotation';
+                annotationPanel.classList.add('visible');
+            }
+
+            function closeAnnotationPanel() {
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                    activeAnnotationId = null;
+                }
+                annotationPanel.classList.remove('visible');
+                currentPanelState = null;
+            }
+
+            aboutSongButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (annotationPanel.classList.contains('visible') && currentPanelState === 'about') {
+                    closeAnnotationPanel();
+                } else {
+                    showAboutContent();
+                }
+            });
+
+            lyricsLines.forEach(line => {
+                line.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const clickedAnnotationId = line.getAttribute('data-annotation-id');
+                    if (clickedAnnotationId === activeAnnotationId) {
+                        closeAnnotationPanel();
+                    } else {
+                        showAnnotationContent(line);
+                    }
+                });
+            });
+
+            closeButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeAnnotationPanel();
+            });
+
+            document.body.addEventListener('click', (e) => {
+                if (annotationPanel.classList.contains('visible') && !annotationPanel.contains(e.target) && !aboutSongButton.contains(e.target)) {
+                    closeAnnotationPanel();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

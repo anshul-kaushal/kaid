@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khoj - Annotated Lyrics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-dark: #000000;
+            --surface-color: #201A28; 
+            --text-primary: #e2e2e2;
+            --text-secondary: #888888;
+            --border-color: #3a2a4a; 
+            --album-identity-color: #9333ea; 
+            --hover-accent-color: rgba(147, 51, 234, 0.15); 
+            --icon-color-light-purple: #b298dc; 
+        }
+        body {
+            font-family: 'Lora', serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+        }
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--background-dark); }
+        ::-webkit-scrollbar-thumb { background-color: #581c87; border-radius: 8px; border: 2px solid var(--background-dark); }
+        .main-container { max-width: 768px; }
+        .lyrics-header h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--album-identity-color);
+        }
+        .lyrics-line {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .lyrics-line:hover {
+            background-color: var(--hover-accent-color);
+            color: var(--text-primary);
+        }
+        .lyrics-line.active {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            font-weight: 600;
+        }
+        .verse-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+        }
+        #annotation-panel {
+            background-color: var(--surface-color);
+            border-left: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 550px;
+            height: 100vh;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+            z-index: 50;
+            font-family: 'Inter', sans-serif;
+        }
+        #annotation-panel.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        /* #panel-header-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--primary-accent-color);
+        } */
+        .annotation-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+        .source-lyric {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            font-weight: 600;
+        }
+        
+        .close-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: transparent;
+            color: var(--icon-color-light-purple);
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .close-button:hover {
+            background-color: var(--album-identity-color);
+            color: #fff;
+        }
+        .close-button svg {
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: rgba(32, 26, 40, 0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: var(--icon-color-light-purple);
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+        }
+        .back-button:hover {
+            background-color: var(--album-identity-color);
+            color: #fff;
+            transform: scale(1.05);
+        }
+        .back-button svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .about-button-expand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            height: 2.5rem;
+            padding: 0 0.75rem;
+            border-radius: 999px;
+            background-color: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            overflow: hidden;
+        }
+        .about-button-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            width: 0;
+            transition: width 0.4s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.2s ease;
+        }
+        .about-button-expand:hover {
+            background-color: var(--surface-color);
+            color: var(--text-primary);
+            border-color: var(--primary-accent-color);
+        }
+        .about-button-expand:hover .about-button-text {
+            width: 50px;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .lyrics-line { font-size: 1rem; line-height: 1.7; }
+            #annotation-panel {
+                top: auto;
+                bottom: 0;
+                width: 100%;
+                max-width: 100%;
+                height: 60vh;
+                transform: translateY(100%);
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+                border-top-left-radius: 20px;
+                border-top-right-radius: 20px;
+            }
+            #annotation-panel.visible { transform: translateY(0); }
+            .back-button { top: 1rem; left: 1rem; width: 2.5rem; height: 2.5rem; }
+            .back-button svg { width: 1.25rem; height: 1.25rem; }
+        }
+    </style>
+</head>
+<body class="">
+    <a href="index.html" class="back-button" aria-label="Back to main page">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+    </a>
+        
+    <div class="main-container px-6 py-12 md:px-12 md:py-24">
+        <header class="lyrics-header mb-12">
+            <div class="flex items-center gap-4">
+                <h1 class="text-5xl md:text-6xl font-bold mb-0">khoj</h1>
+                <button id="about-song-button" class="about-button-expand" aria-label="About this song">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="about-button-text">About</span>
+                </button>
+            </div>
+            <h2 class="text-xl text-gray-400 mt-2">Annotated Lyrics</h2>
+        </header>
+
+        <section id="lyrics-content">
+            <h3 class="verse-title">Verse 1</h3>
+            <div id="lyrics-v1" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="v1-g1">rurh rahi jind meri jiven dulda aa khoon ik kalayi ton</p>
+                <p class="lyrics-line" data-annotation-id="v1-g1">jihda sidha chira karda byaan sigi gunjhalan ton satayi oo</p>
+                <p class="lyrics-line" data-annotation-id="v1-g2">thikriyan sheeshe diyan khilriyan karni hale safayi bhot</p>
+                <p class="lyrics-line" data-annotation-id="v1-g2">nakaaran khud nu ve rijhdi aa mere dili nit hi ladhayi ghor</p>
+                <p class="lyrics-line" data-annotation-id="v1-g3">apnaawan khud nu? eh keho jeha totka?</p>
+                <p class="lyrics-line" data-annotation-id="v1-g3">meri kal naalon kaabliyat ghat naale ghati meri yogta</p>
+                <p class="lyrics-line" data-annotation-id="v1-g4">pehla vangu khud nu ni jhonkda, khaahishan ne bakaaeya</p>
+                <p class="lyrics-line" data-annotation-id="v1-g4">mera mareya hoya haunsla,</p>
+                <p class="lyrics-line" data-annotation-id="v1-g5">jaayeza eh kamaya jo vi ajj mai hai oo bahut nhi,</p>
+                <p class="lyrics-line" data-annotation-id="v1-g5">naale rehenda menu khauf vi nakaami da</p>
+                <p class="lyrics-line" data-annotation-id="v1-g6">ve naale haaran ton bachaav rakhan di iko aushadi</p>
+                <p class="lyrics-line" data-annotation-id="v1-g6">kaccha jehre kam’ch oo gaul nhi,</p>
+                <p class="lyrics-line" data-annotation-id="v1-g7">par bina jitt de wajood nhi, jo na haasil ohdi chaurh ki?</p>
+                <p class="lyrics-line" data-annotation-id="v1-g7">honi kiven jind eh kabool si?</p>
+                <p class="lyrics-line" data-annotation-id="v1-g8">tan hi khud naal hi khaawan khaar, tarhfan khamakhaah</p>
+                <p class="lyrics-line" data-annotation-id="v1-g8">din beete rehke sunn pher raaati lafzaan’ch paawan jaan</p>
+                <p class="lyrics-line" data-annotation-id="v1-g9">mull ki sahaan da? je naa haasil koi padhar</p>
+                <p class="lyrics-line" data-annotation-id="v1-g9">tan hi khud nu chaahwan na, ghin di kaid meri hoyi battar tanhi</p>
+            </div>
+            
+            <h3 class="verse-title">Hook</h3>
+            <div id="lyrics-hook-1" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="hook-1">ve tere pyaar pyaar pyaar di karda mai khoj</p>
+                <p class="lyrics-line" data-annotation-id="hook-1">ve tere pyaar pyaar pyaar di karda mai khoj</p>
+                <p class="lyrics-line" data-annotation-id="hook-1">chalda mai dhoh modhe te lakhan aasaawaan da bojh</p>
+                <p class="lyrics-line" data-annotation-id="hook-1">tere pyaar pyaar pyaar di karda mai khoj</p>
+            </div>
+
+            <h3 class="verse-title">Verse 2</h3>
+            <div id="lyrics-v2" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="v2-g1">jiddan nasha raat da, hale vi mathi ohde tikkeya mere raaj ah</p>
+                <p class="lyrics-line" data-annotation-id="v2-g2">gal eh nhi ki aj vi ohnu hi bhaaldan, yan dubbeya ohdi yaadan’ch</p>
+                <p class="lyrics-line" data-annotation-id="v2-g2">ohde ditte zakhman’ch chon ni mai rachiyan eh aadatan</p>
+                <p class="lyrics-line" data-annotation-id="v2-g3">tanhi labhda aa keemat meri, kisi naar di baahan’ch main</p>
+                <p class="lyrics-line" data-annotation-id="v2-g3">rehenda na seemat, meri chaahat ae hazaaran’ch kaid</p>
+                <p class="lyrics-line" data-annotation-id="v2-g4">magri ve paawaan na pair jihnu karlan vass vich</p>
+                <p class="lyrics-line" data-annotation-id="v2-g4">ohton ni mai jaawan hatt piche, ohde naal nibhaawan mai vair</p>
+                <p class="lyrics-line" data-annotation-id="v2-g5">kise nu chahida aa mai? pakka oh’ch honi koi khot</p>
+                <p class="lyrics-line" data-annotation-id="v2-g5">mera laike verva jo pura chaundi menu menu chahidi ni oh</p>
+                <p class="lyrics-line" data-annotation-id="v2-g6">grudge bahute dil vich vase, kurhattanan’ch ghuleya subhaaw</p>
+                <p class="lyrics-line" data-annotation-id="v2-g6">gal har dil utte vaje, lagda jeon bhuleya mazaak</p>
+                <p class="lyrics-line" data-annotation-id="v2-g7">kadd kadeya ve hankaar ne CN Tower de mukaable</p>
+                <p class="lyrics-line" data-annotation-id="v2-g7">heenta de asan khaade bharam na ehe mukaam de</p>
+                <p class="lyrics-line" data-annotation-id="v2-g8">nhi sahaar de kise da vi ehsaan ve ikk bhaar eh</p>
+                <p class="lyrics-line" data-annotation-id="v2-g8">je sada rahe latt uchi tan aasaar rehen ve pyaar de</p>
+            </div>
+            
+            <h3 class="verse-title">Hook</h3>
+            <div id="lyrics-hook-2" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="hook-2">ve tere pyaar pyaar pyaar di karda mai khoj</p>
+                <p class="lyrics-line" data-annotation-id="hook-2">ve tere pyaar pyaar pyaar di karda mai khoj</p>
+                <p class="lyrics-line" data-annotation-id="hook-2">chalda mai dhoh modhe te lakhan aasaawaan da bojh</p>
+                <p class="lyrics-line" data-annotation-id="hook-2">tere pyaar pyaar pyaar di karda mai khoj</p>
+            </div>
+
+            <h3 class="verse-title">Verse 3</h3>
+            <div id="lyrics-v3" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="v3-g1">tang aaya mai man zindagi nu maidaan-e varchasav</p>
+                <p class="lyrics-line" data-annotation-id="v3-g2">tang aaya darsha mere palle Khabbi Khan de kartab</p>
+                <p class="lyrics-line" data-annotation-id="v3-g3">tang aa virodhiyan de tabke de dil jittan de kar jatan</p>
+                <p class="lyrics-line" data-annotation-id="v3-g4">tang aaya taaliyaan, tareefan, tarkeeban vich labh barkat</p>
+                <p class="lyrics-line" data-annotation-id="v3-g5">tang aaya hoke tang mai, tang aaya chad umeed</p>
+                <p class="lyrics-line" data-annotation-id="v3-g6">karan aas vekhan darpan jad, uthe dil’ch na peerh</p>
+                <p class="lyrics-line" data-annotation-id="v3-g7">karan aas jo na hath vich howe sir mathe o naseeb</p>
+                <p class="lyrics-line" data-annotation-id="v3-g8">karan aas khud nu karan maaf, banan khud da masheer</p>
+                <p class="lyrics-line" data-annotation-id="v3-g9">karan aas mera hath oo jehra dujeyan de modheyan di</p>
+                <p class="lyrics-line" data-annotation-id="v3-g9">dhill vekh uthda si kisi din uthuga oo himmatan’ch mere layi</p>
+                <p class="lyrics-line" data-annotation-id="v3-g10">dallidar dwaari tapp ke ni howan karman da mureed</p>
+                <p class="lyrics-line" data-annotation-id="v3-g11">saali giddarhan di yaari chad ke ve kairhi karan meri vingi reedh</p>
+                <p class="lyrics-line" data-annotation-id="v3-g12">aj ton ehi reet, mere buhe sada layi aa band</p>
+                <p class="lyrics-line" data-annotation-id="v3-g12">ohna sappan layi jo thalle laake meri haar vich labhde aanand</p>
+                <p class="lyrics-line" data-annotation-id="v3-g13">kar sakda udeek, moh gairaan da nhi pehli mang</p>
+                <p class="lyrics-line" data-annotation-id="v3-g14">pehla khud naal hi vair di jo kaid torhan da labh lawan dhang jihde karke….</p>
+            </div>
+
+            <h3 class="verse-title">Hook</h3>
+            <div id="lyrics-hook-3" class="space-y-1">
+                <p class="lyrics-line" data-annotation-id="hook-3">ve tere pyaar pyaar pyaar di karda mai khoj</p>
+                <p class="lyrics-line" data-annotation-id="hook-3">ve tere pyaar pyaar pyaar di karda mai khoj</p>
+                <p class="lyrics-line" data-annotation-id="hook-3">chalda mai dhoh modhe te lakhan aasaawaan da bojh</p>
+                <p class="lyrics-line" data-annotation-id="hook-3">tere pyaar pyaar pyaar di karda mai khoj</p>
+            </div>
+        </section>
+    </div>
+
+    <aside id="annotation-panel" class="flex flex-col">
+        <header class="p-4 border-b flex items-center justify-between" style="border-color: var(--border-color);">
+            <div id="panel-header-content" class="flex-grow mr-4">
+            </div>
+            <button id="close-annotation" class="close-button flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </header>
+        <div id="annotation-content-area" class="annotation-content">
+        </div>
+    </aside>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+             const annotations = { "v1-g1": "Anshul opens 'khoj' with a powerful <strong>extended metaphor</strong>, conveying that his 'life is uncontrollably slipping away.' This is starkly illustrated by the image of 'blood dripping from a wrist,' a vivid representation of <strong>self-harm or suicidal thoughts</strong> used to express extreme despair. This resonates with his plea for an 'early death' in 'degenerate.' He explains that the 'straight mark on that wrist directly communicates how it was profoundly troubled by life's intricate challenges,' framing the symbolic injury as an explicit articulation of deep, unresolved mental anguish—a direct link to the album's theme of being <strong>'imprisoned by thoughts' ('kaid').</strong>", "v1-g2": "Continuing the theme of internal brokenness, Anshul states: 'broken pieces of glass are scattered, and there's still a lot of cleaning to do.' The scattered glass is a powerful symbol of his shattered self-image, directly echoing the literal <strong>'broken mirror' and 'bleeding knuckles'</strong> from 'degenerate.' This isn't just a mess to be cleaned, but a representation of the extensive emotional and psychological repair he must undertake. The core of his torment is then revealed: 'rejecting himself, a fierce daily internal struggle boils within him,' which is the central conflict he seeks to resolve in this final track.", "v1-g3": "Anshul rhetorically asks, 'Embrace myself? What kind of trick is this?', revealing a deep and ingrained skepticism towards the concept of self-acceptance. His self-loathing is so profound that self-love feels like a foreign, almost deceptive idea. He immediately justifies this skepticism by confessing, 'My capability is less than yesterday, and my competence has decreased,' highlighting a painful and persistent sense of personal decline and inadequacy that fuels his self-rejection.", "v1-g4": "Anshul confesses that he 'no longer exerts himself with the intensity he once did,' pointing to a severe depletion of motivation and drive. He attributes this to his 'ambitions remain[ing] unfulfilled or pending,' suggesting a cycle where lack of achievement kills his drive, and lack of drive prevents achievement. This culminates in the devastating declaration, 'My courage is dead,' signifying a complete loss of spirit and an overwhelming state of hopelessness.", "v1-g5": "Anshul states, 'this is the outcome I've earned; whatever I am today is insufficient.' This reveals his profound sense of unfulfilled potential and a deep-seated belief that he has fallen short of his own standards. He further confesses, 'and I also remain in fear of failure,' indicating that a constant, paralyzing anxiety prevents him from taking the risks necessary for growth, trapping him in his current state.", "v1-g6": "To cope with his fear of failure, Anshul reveals his primary defense mechanism: 'the only remedy to shield oneself from defeat is to not engage with tasks where one is not skilled.' This highlights a strategy of <strong>pre-emptive avoidance</strong>. By refusing to participate in anything where he might fail, he protects his fragile ego but also guarantees stagnation, a form of self-sabotage that directly contributes to his 'dead courage' and unfulfilled ambitions.", "v1-g7": "Anshul asserts that 'without victory, there is no existence or meaning' and questions 'what pride can be taken in what remains unachieved?' This reveals a harsh, all-or-nothing worldview where his self-worth is entirely contingent on tangible success and external validation. Because he cannot meet this impossible standard, he asks rhetorically, 'how could this life ever be accepted?', showing his inability to find value in himself outside of his accomplishments.", "v1-g8": "As a direct result of his inability to accept himself, Anshul reveals, 'that's why I harbor bitterness against myself, suffering unnecessarily.' He then describes his coping cycle: 'days pass in a state of emotional numbness, but at night, he breathes life into words.' This illustrates his struggle where daytime apathy is channeled into nocturnal artistic creation, his primary—and often only—outlet for processing his pain.", "v1-g9": "Here, Anshul's self-loathing reaches a crescendo. He questions the very value of his existence, asking, 'What is the worth of breaths if no level of achievement is attained?' This existential despair leads him to confess, 'That's why I don't desire myself.' He concludes that his 'imprisonment of disgust has become worse,' a state of intensified self-hatred. The final word, 'tanhi' (therefore), serves as a crucial bridge, indicating that this worsened condition is the direct catalyst for the song's central quest.", "hook-1": "Following his declaration of intensified self-disgust, Anshul repeatedly declares an intense search ('khoj') for 'your love.' Given the context, this is interpreted as an <strong>internal quest for self-acceptance and self-love</strong>, a direct response to his 'imprisonment of disgust.' He also carries 'the heavy burden of millions of aspirations on his shoulders,' symbolizing both his own unfulfilled potential and the weight of expectations from his loved ones, which adds pressure to his search for inner peace.", "v2-g1": "Anshul opens Verse 2 by stating, 'Just like a hangover from last night, Ganga still rules over his head.' This vividly conveys the persistent, lingering control that Ganga, a significant figure from his past, continues to exert over his thoughts and emotions, a direct echo of a line from the song <strong>'Ganga'</strong>.", "v2-g2": "Anshul clarifies that Ganga's persistent presence is not due to him actively searching for her, but because he has 'developed these habits (or this nature) from the wounds she gave him.' This indicates that her lingering impact is a direct consequence of past emotional trauma, rather than current longing.", "v2-g3": "As a result of habits formed from past trauma and his deep self-loathing, Anshul seeks 'his worth in the arms of some woman.' His romantic longing is 'imprisoned in thousands' of them, a paradox signifying that while his desire extends broadly, this very dispersion becomes a form of confinement, preventing genuine fulfillment.", "v2-g4": "Anshul describes his paradoxical approach to relationships: he 'does not chase' women he already has control over, and in fact 'maintains enmity with them.' This suggests a profound struggle with his own self-worth and a self-sabotaging pattern of rejecting accessible romantic connections.", "v2-g5": "Anshul questions, 'Does anyone want me? There must be some flaw in them,' assuming that any woman who desires him must be defective. He then states, 'The one who wants me completely, knowing all my details, I don't want her,' demonstrating a pattern of actively rejecting genuine, unconditional acceptance.", "v2-g6": "Anshul reveals that his heart harbors 'many grudges' and his 'nature is mixed with bitterness.' This means he 'takes everything to heart, as if he has forgotten what a joke is,' indicating a profound sensitivity and inability to dismiss negativity.", "v2-g7": "Anshul states that his 'arrogance has soared to heights rivaling the CN Tower.' However, he clarifies that this pride stems from a profound sense of inferiority, not a delusion of high position. This paradoxical blend of towering pride and deep-seated insecurity highlights his internal struggles.", "v2-g8": "Anshul states that he 'does not tolerate anyone's favor; it is a burden,' reflecting his intense pride. He then asserts, 'If his leg remains high (maintaining dominance or self-respect), then there remain signs of love,' revealing a cynical, transactional worldview where affection is conditional upon maintaining a position of strength.", "hook-2": "Anshul repeatedly declares an intense search for 'your love.' This is interpreted as an <strong>internal quest for self-acceptance and self-love</strong>, a direct response to his worsened 'imprisonment of disgust.' He also carries 'the heavy burden of millions of aspirations on his shoulders,' encompassing both his own unfulfilled potential and the expectations imposed by his loved ones.", "v3-g1": "Anshul states, 'I am fed up with my mind, viewing life as a battlefield of dominance.' This reveals his profound weariness with his own internal conflicts, echoing the <strong>'Ganga'</strong> outro where life is explicitly framed as a 'battlefield of war.'", "v3-g2": "Anshul expresses profound fatigue: he is weary of pretending to possess the impressive capabilities associated with a formidable persona, known as 'Khabbi Khan.' This exhaustion with constantly presenting a powerful image highlights a significant internal burden.", "v3-g3": "Anshul is 'fed up with trying to win the hearts of the opposing faction/group.' This reveals his exhaustion with constantly seeking to gain approval, even from adversaries, stemming from his deep self-loathing and insecurity.", "v3-g4": "Anshul states he is 'fed up with finding fruitfulness or success in applause, praise, and strategies.' This reveals a profound weariness with the constant pursuit of external validation and engaging in constant strategic maneuvering.", "v3-g5": "Anshul expresses that 'he is tired of experiencing constant distress, and equally weary of repeatedly abandoning hope.' This dual exhaustion highlights a paradoxical cycle of being troubled by his emotional turmoil and fatigued by his own act of surrendering aspirations.", "v3-g6": "Anshul wishes that 'when he gazes at his own reflection, his heart feels no agony.' This yearning for inner peace connects to the recurring <strong>mirror motif</strong> throughout the album, consistently symbolizing intense and painful self-confrontation.", "v3-g7": "Anshul hopes 'to accept with bowed head the destiny that is not in his hands.' This marks a potential shift from his usual internal battles towards a more active and deliberate choice to accept that which he cannot change.", "v3-g8": "Anshul expresses a profound hope: 'He hopes to forgive himself and become his own confidante.' This reveals a deep need to address his pervasive self-blame and insecurity, and to move away from his past isolation.", "v3-g9": "Anshul hopes that 'the hand which used to rise seeing others' weak shoulders will one day rise in courage for him.' This signifies a profound desire to redirect his inherent compassion and strength inward, moving towards self-empowerment and away from self-sabotage.", "v3-g10": "Anshul hopes 'to transcend the threshold of his own idleness and embrace a commitment to purposeful action.' This desire to become a 'disciple of action' signifies a shift towards reclaiming his agency and diligently shaping his future, overcoming the laziness that has been a recurring struggle.", "v3-g11": "Anshul aspires to strengthen his inner conviction and integrity, metaphorically represented by his 'crooked spine,' to enable him to abandon the company of 'cowardly jackals,' signifying a rejection of deceitful and undermining relationships.", "v3-g12": "Anshul declares a firm boundary: 'From today, this is the rule, my doors are forever closed for those snakes who find joy in my defeat.' This signifies his permanent severance from malicious individuals who actively undermine him.", "v3-g13": "Anshul states, 'He can wait; the affection of others is not his primary concern.' This signifies a notable shift in his focus, prioritizing his internal journey over seeking external validation and marking a crucial step towards self-reliance.", "v3-g14": "Anshul articulates his foremost aspiration: 'to find a way to break free from the imprisonment of enmity with himself.' This central quest targets his profound internal conflict and is explicitly stated as the driving reason behind his continuous 'search for love' in the song's hook.", "hook-3": "The final repetition of the hook recontextualizes the entire song. After articulating a clear path forward in Verse 3—forgiving himself, setting boundaries, and prioritizing his internal journey—this is no longer a desperate search. Instead, it becomes a <strong>statement of affirmed purpose</strong>. The 'khoj' for self-love is now the clearly defined goal that motivates all the difficult changes he has just committed to making. It is the 'why' behind his newfound resolve." };
+
+            const aboutSongButton = document.getElementById('about-song-button');
+            const lyricsLines = document.querySelectorAll('.lyrics-line');
+            const annotationPanel = document.getElementById('annotation-panel');
+            const panelHeaderContent = document.getElementById('panel-header-content');
+            const annotationContentArea = document.getElementById('annotation-content-area');
+            const closeButton = document.getElementById('close-annotation');
+            let activeAnnotationId = null;
+            let currentPanelState = null;
+
+            const aboutSongText = `
+                <p class="mb-4">The search begins not with a step, but with a confession. "khoj" opens with a brutal admission of self-hatred so deep that the idea of self-acceptance feels like a "trick". He is a man who rejects genuine affection out of a deep-seated belief that he is flawed. From that broken place, the album's final mission is launched. It is a search for love, not from the world, but from the cynical, critical voice within. It is the beginning of an answer to the entire album's central question: how do you escape a prison when you are both the captive and the guard?</p>
+            `;
+
+            function showAboutContent() {
+                panelHeaderContent.innerHTML = `<h2 id="panel-header-title">About 'degenerate'</h2>`;
+                annotationContentArea.innerHTML = `<div class="p-6">${aboutSongText}</div>`;
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                    activeAnnotationId = null;
+                }
+                currentPanelState = 'about';
+                annotationPanel.classList.add('visible');
+            }
+
+            function showAnnotationContent(lineElement) {
+                const annotationId = lineElement.getAttribute('data-annotation-id');
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                }
+                document.querySelectorAll(`[data-annotation-id='${annotationId}']`).forEach(el => el.classList.add('active'));
+                activeAnnotationId = annotationId;
+
+                const annotationText = annotations[annotationId] || "No annotation for this line.";
+                const groupElements = lineElement.parentElement.querySelectorAll(`[data-annotation-id='${annotationId}']`);
+                const sourceText = Array.from(groupElements).map(el => el.innerHTML).join('<br>');
+
+                panelHeaderContent.innerHTML = `<p class="source-lyric p-3 rounded-lg text-sm">${sourceText}</p>`;
+                annotationContentArea.innerHTML = `<div class="p-6">${annotationText}</div>`;
+                currentPanelState = 'annotation';
+                annotationPanel.classList.add('visible');
+            }
+
+            function closeAnnotationPanel() {
+                if (activeAnnotationId) {
+                    document.querySelectorAll(`[data-annotation-id='${activeAnnotationId}'].active`).forEach(el => el.classList.remove('active'));
+                    activeAnnotationId = null;
+                }
+                annotationPanel.classList.remove('visible');
+                currentPanelState = null;
+            }
+
+            aboutSongButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (annotationPanel.classList.contains('visible') && currentPanelState === 'about') {
+                    closeAnnotationPanel();
+                } else {
+                    showAboutContent();
+                }
+            });
+
+            lyricsLines.forEach(line => {
+                line.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const clickedAnnotationId = line.getAttribute('data-annotation-id');
+                    if (clickedAnnotationId === activeAnnotationId) {
+                        closeAnnotationPanel();
+                    } else {
+                        showAnnotationContent(line);
+                    }
+                });
+            });
+
+            closeButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeAnnotationPanel();
+            });
+
+            document.body.addEventListener('click', (e) => {
+                if (annotationPanel.classList.contains('visible') && !annotationPanel.contains(e.target) && !aboutSongButton.contains(e.target)) {
+                    closeAnnotationPanel();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
